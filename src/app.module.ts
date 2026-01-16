@@ -3,8 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './common/logger/logger.module';
 import { validate } from 'class-validator';
 import { SimsModule } from './modules/sims/sims.module';
-import { AppConfigModule } from './config/app-config.module';
+import { AppConfigModule } from './config/settings/app-config.module';
 import { PrismaModule } from './core/database/prisma.module';
+import { RedisModule } from './core/redis/redis.module';
+import { BullModule } from '@nestjs/bull';
+import { AppConfigService } from './config/settings/app-config.service';
 
 @Module({
 	imports: [
@@ -12,8 +15,20 @@ import { PrismaModule } from './core/database/prisma.module';
 			validate,
 			isGlobal: true,
 		}),
-    AppConfigModule,
-    PrismaModule,
+		BullModule.forRootAsync({
+			imports: [AppConfigModule],
+			inject: [AppConfigService],
+			useFactory: (config: AppConfigService) => ({
+				redis: {
+					host: config.REDIS_HOST,
+					port: config.REDIS_PORT,
+					password: config.REDIS_PASSWORD,
+				},
+			}),
+		}),
+		AppConfigModule,
+		PrismaModule,
+		RedisModule,
 		LoggerModule,
 		SimsModule,
 	],
