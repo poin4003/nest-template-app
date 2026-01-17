@@ -12,10 +12,20 @@ datasource db {
   provider = "postgresql"
 }
 
-model Sim {
-  id           Int      @id @default(autoincrement())
-  serialNumber String   @unique
-  phoneNumber  String   @unique
-  status       String   @default("ACTIVE")
-  createdAt    DateTime @default(now())
+model ActionLog {
+  id          String    @id @default(uuid()) @db.Uuid
+  payload     String?   @db.Text
+  objectId    String?   @map("object_id")
+  response    String?   @db.Text
+  reqAt       DateTime? @map("req_at")
+  reqDuration Float?    @map("req_duration")
+  status      Int       @default(1)
+  type        Int       @default(1)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  description String?   @db.Text
+  note        String?   @db.Text
+
+  @@index([objectId])
+  @@map("action_logs")
 }

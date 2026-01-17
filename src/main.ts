@@ -23,7 +23,9 @@ async function bootstrap() {
 	const appPort = configService.get('APP_PORT', { infer: true });
 
 	app.useLogger(app.get(MyLoggerService));
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(new ValidationPipe({
+    transform: true
+  }));
 	app.useGlobalFilters(new GlobalExceptionFilter());
 
 	SwaggerModule.setup('api', app, document);

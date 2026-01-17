@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './common/logger/logger.module';
 import { validate } from 'class-validator';
-import { SimsModule } from './modules/sims/sims.module';
 import { AppConfigModule } from './config/settings/app-config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { RedisModule } from './core/redis/redis.module';
 import { BullModule } from '@nestjs/bull';
 import { AppConfigService } from './config/settings/app-config.service';
+import { ActionLogModule } from './modules/action-logs/action-log.module';
+import { VnSkyModule } from './modules/vn-sky/vn-sky.module';
 
 @Module({
 	imports: [
@@ -18,11 +19,11 @@ import { AppConfigService } from './config/settings/app-config.service';
 		BullModule.forRootAsync({
 			imports: [AppConfigModule],
 			inject: [AppConfigService],
-			useFactory: (config: AppConfigService) => ({
+			useFactory: (settings: AppConfigService) => ({
 				redis: {
-					host: config.REDIS_HOST,
-					port: config.REDIS_PORT,
-					password: config.REDIS_PASSWORD,
+					host: settings.REDIS_HOST,
+					port: settings.REDIS_PORT,
+					password: settings.REDIS_PASSWORD,
 				},
 			}),
 		}),
@@ -30,7 +31,8 @@ import { AppConfigService } from './config/settings/app-config.service';
 		PrismaModule,
 		RedisModule,
 		LoggerModule,
-		SimsModule,
+    ActionLogModule,
+    VnSkyModule,
 	],
 })
 export class AppModule {}

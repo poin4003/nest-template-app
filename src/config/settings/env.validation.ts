@@ -55,11 +55,17 @@ class RedisEnvironment {
 	REDIS_PASSWORD: string = '';
 }
 
-export class EnvironmentVariables extends IntersectionType (
-  AppEnvironment,
-  LoggerEnvironment,
-  DatabaseEnvironment,
-  RedisEnvironment
+class VnSkyPartnerEnvironment {
+	@IsString()
+	VNSKY_BASE_URL: string = 'http://localhost:8000';
+}
+
+export class EnvironmentVariables extends IntersectionType(
+	AppEnvironment,
+	LoggerEnvironment,
+	DatabaseEnvironment,
+	RedisEnvironment,
+	VnSkyPartnerEnvironment,
 ) {}
 
 export function validate(config: Record<string, unknown>) {
