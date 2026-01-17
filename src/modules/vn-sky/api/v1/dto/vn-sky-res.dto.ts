@@ -2,19 +2,29 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 export class VnSkyLoginReqDto {
-  @ApiProperty({ example: 'password', description: 'grant_type' })
+  @ApiProperty({ example: 'password' })
 	@IsString()
-	grant_type: string = 'password';
+	grantType: string = 'password';
 
   @ApiProperty({ example: 'client_id' })
 	@IsString()
-	client_identity: string = 'ECOTE';
+	clientIdentity: string = 'ECOTE';
 
-  @ApiProperty({ example: 'user_01' })
+  @ApiProperty({ example: 'user01' })
 	@IsString()
 	username: string;
 
   @ApiProperty({ example: '123456' })
 	@IsString()
 	password: string;
+}
+
+export class VnSkyRefreshTokenReqDto {
+  @ApiProperty({ example: 'refresh_token' })
+  @IsString() 
+	grantType: string = 're';
+
+  @ApiProperty({ example: 'refresh_token' })
+  @IsString()
+  refreshToken: string
 }

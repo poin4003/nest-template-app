@@ -9,16 +9,18 @@ import {
 	BaseApiRequestCommand,
 	FormDataApiRequest,
 	JsonApiRequest,
-  UrlEncodedApiRequest,
+	UrlEncodedApiRequest,
 } from './schemas/common.command';
 import { ActionLogStatusEnum } from '@/modules/action-logs/action-log.enum';
 import { HTTPMethod } from '@/core/enums/http-method.enum';
+import { MyLoggerService } from '@/common/logger/my-logger.service';
 
 @Injectable()
 export class CommonService {
 	constructor(
 		private readonly httpService: HttpService,
 		private readonly actionLogService: ActionLogService,
+		private readonly logger: MyLoggerService,
 	) {}
 
 	async callApi<T>(cmd: JsonApiRequest<T>): Promise<T> {
@@ -48,30 +50,30 @@ export class CommonService {
 		return this.executeRequest<T>(cmd, form, payloadLogStr, headers);
 	}
 
-  async callUrlEncodedApi<T>(cmd: UrlEncodedApiRequest<T>): Promise<T> {
-    const plainPayload = instanceToPlain(cmd.payload);
+	async callUrlEncodedApi<T>(cmd: UrlEncodedApiRequest<T>): Promise<T> {
+		const plainPayload = instanceToPlain(cmd.payload);
 
-    const params = new URLSearchParams();
-    
-    if (plainPayload) {
-      for (const key in plainPayload) {
-        const value = plainPayload[key];
-        
-        if (value !== undefined && value !== null) {
-          params.append(key, String(value));
-        }
-      }
-    }
+		const params = new URLSearchParams();
 
-    const payloadLogStr = params.toString();
+		if (plainPayload) {
+			for (const key in plainPayload) {
+				const value = plainPayload[key];
 
-    const headers = { 
-      'Content-Type': 'application/x-www-form-urlencoded',
-      ...cmd.headers
-    };
+				if (value !== undefined && value !== null) {
+					params.append(key, String(value));
+				}
+			}
+		}
 
-    return this.executeRequest<T>(cmd, params, payloadLogStr, headers);
-  }
+		const payloadLogStr = params.toString();
+
+		const headers = {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			...cmd.headers,
+		};
+
+		return this.executeRequest<T>(cmd, params, payloadLogStr, headers);
+	}
 
 	private async executeRequest<T>(
 		cmd: BaseApiRequestCommand<T>,
@@ -108,20 +110,63 @@ export class CommonService {
 		} finally {
 			const duration = (performance.now() - startAt) / 1000;
 
+			const rawLogData =
+				status === ActionLogStatusEnum.FAILURE ? responseData : responseData;
+
+			const sanitizedResponse = this.sanitizeLogData(rawLogData, 200);
+
+			const finalResponseLog =
+				status === ActionLogStatusEnum.FAILURE
+					? JSON.stringify(sanitizedResponse || errorMsg)
+					: JSON.stringify(sanitizedResponse);
+
 			this.actionLogService
 				.createActionLog({
 					payload: payloadLogStr,
 					objectId: '',
-					response:
-						status === ActionLogStatusEnum.FAILURE
-							? errorMsg
-							: JSON.stringify(responseData),
+					response: finalResponseLog,
 					reqAt: reqAt,
 					reqDuration: duration,
 					status: status,
 					type: cmd.logType,
 				})
-				.catch(() => {});
+				.catch((err) => {
+					this.logger.error('Write ActionLog Failed:', err);
+				});
 		}
+	}
+
+	private sanitizeLogData(data: any, maxLength = 500): any {
+		if (!data) return data;
+
+		if (typeof data === 'string') {
+			if (data.length > maxLength) {
+				return `${data.substring(0, maxLength)} ...[TRUNCATED ${data.length - maxLength} chars]`;
+			}
+			return data;
+		}
+
+		if (Array.isArray(data)) {
+			if (data.length > 20) {
+				const preview = data
+					.slice(0, 20)
+					.map((item) => this.sanitizeLogData(item, maxLength));
+				preview.push(`...[HIDDEN ${data.length - 20} ITEMS]`);
+				return preview;
+			}
+			return data.map((item) => this.sanitizeLogData(item, maxLength));
+		}
+
+		if (typeof data === 'object') {
+			const newData: any = {};
+			for (const key in data) {
+				if (Object.prototype.hasOwnProperty.call(data, key)) {
+					newData[key] = this.sanitizeLogData(data[key], maxLength);
+				}
+			}
+			return newData;
+		}
+
+		return data;
 	}
 }

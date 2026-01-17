@@ -58,6 +58,18 @@ class RedisEnvironment {
 class VnSkyPartnerEnvironment {
 	@IsString()
 	VNSKY_BASE_URL: string = 'http://localhost:8000';
+
+  @IsString()
+  VNSKY_AUTHENTICATION_BASIC_CODE: string = '';
+
+  @IsString()
+  VNSKY_CLIENT_IDENTITY: string = '';
+
+  @IsString()
+  VNSKY_USERNAME: string = '';
+
+  @IsString()
+  VNSKY_PASSWORD: string = '';
 }
 
 export class EnvironmentVariables extends IntersectionType(

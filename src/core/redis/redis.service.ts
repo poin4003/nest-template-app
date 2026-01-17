@@ -88,4 +88,33 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 			this.logger.error('Redis connection timeout: Service connect error');
 		}, REDIS_CONNECT_TIMEOUT);
 	}
+
+  async get(key: string): Promise<string | null> {
+    return await this.getClient().get(key);
+  }
+
+  async set(key: string, value: string, ttlSeconds?: number): Promise<'OK'> {
+    if (ttlSeconds) {
+      return await this.getClient().setex(key, ttlSeconds, value);
+    }
+    return await this.getClient().set(key, value);
+  }
+
+  async setEx(key: string, value: string, ttl: number): Promise<'OK'> {
+    return await this.getClient().setex(key, ttl, value);
+  }
+
+  async setJson(key: string, value: any, ttlSeconds?: number): Promise<'OK'> {
+    const jsonString = JSON.stringify(value);
+    return await this.set(key, jsonString, ttlSeconds);
+  }
+
+  async getJson<T>(key: string): Promise<T | null> {
+    const value = await this.get(key);
+    return value ? (JSON.parse(value) as T) : null;
+  }
+
+  async del(key: string): Promise<number> {
+    return await this.getClient().del(key);
+  } 
 }

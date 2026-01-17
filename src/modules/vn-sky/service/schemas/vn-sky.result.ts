@@ -1,15 +1,60 @@
-import { IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
+import { IsNumber, IsString } from 'class-validator';
 
 export class VnSkyLoginResResult {
+  @Expose({ name: 'access_token' })
 	@IsString()
-	access_token: string;
+	accessToken: string;
+
+  @Expose({ name: 'refresh_token' })
+	@IsString()
+	refreshToken: string;
+
+  @Expose({ name: 'token_type' })
+	@IsString()
+	tokenType: string;
+
+  @Expose({ name: 'expires_in' })
+	@IsNumber()
+	expiresIn: number;
+}
+
+export class VnSkyClient {
+	@IsString()
+	code: string;
 
 	@IsString()
-	refresh_token: string;
+	name: string;
 
 	@IsString()
-	token_type: string;
+	contactPhone: string;
+}
+
+export class VnSkyRole {
+	@IsString()
+	code: string;
 
 	@IsString()
-	expires_in: number;
+	name: string;
+}
+
+export class VnSkyProfileResult {
+  @IsString()
+  id: string;
+
+  @IsString()
+  username: string;
+
+  @IsString()
+  fullname: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
+  phoneNumber: string;
+
+  client: VnSkyClient;
+
+  roles: [VnSkyRole]
 }
