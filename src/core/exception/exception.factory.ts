@@ -37,4 +37,16 @@ export class ExceptionFactory {
 	static invalidTokenError(detail: string) {
 		return this.create(ResultCode.USER_AUTH_ERROR, detail);
 	}
+
+  static vnSkyLoginError(detail: string) {
+    return this.create(ResultCode.VN_SKY_LOGIN_ERROR, detail);
+  }
+
+  static vnSkyRefreshTokenError(detail: string) {
+    return this.create(ResultCode.VN_SKY_REFRESH_TOKEN_ERROR, detail);
+  }
+
+  static vnSkyProfileError(detail: string) {
+    return this.create(ResultCode.VN_SKY_PROFILE_ERROR, detail);
+  }
 }

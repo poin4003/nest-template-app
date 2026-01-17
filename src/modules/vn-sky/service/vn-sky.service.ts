@@ -14,6 +14,7 @@ import {
 import { HTTPMethod } from '@/core/enums/http-method.enum';
 import { RedisService } from '@/core/redis/redis.service';
 import { MyLoggerService } from '@/common/logger/my-logger.service';
+import { ExceptionFactory } from '@/core/exception/exception.factory';
 
 const VNSKY_KEYS = {
 	ACCESS_TOKEN: 'VNSKY:ACCESS_TOKEN',
@@ -32,52 +33,66 @@ export class VnSkyService {
 
 	async vnSkyProfile() {
 		return this.executeWithAuth(async (token) => {
-			return this.commonService.callUrlEncodedApi(
-				new UrlEncodedApiRequest({
-					url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/api/auth/profile`,
-					method: HTTPMethod.GET,
-					logType: ActionLogTypeEnum.VNSKY_PROFILE,
-					headers: this.getVnSkyHeader(token),
-					responseModel: VnSkyProfileResult,
-				}),
-			);
+			try {
+				return this.commonService.callUrlEncodedApi(
+					new UrlEncodedApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/api/auth/profile`,
+						method: HTTPMethod.GET,
+						logType: ActionLogTypeEnum.VNSKY_PROFILE,
+						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyProfileResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyProfileError('Error profile');
+			}
 		});
 	}
 
 	private async vnSkyLogin(): Promise<VnSkyLoginResResult> {
-		const cmd = new VnSkyLoginReqCommand();
-		cmd.grantType = 'password';
-		cmd.clientIdentity = this.settings.VNSKY_CLIENT_IDENTITY;
-		cmd.username = this.settings.VNSKY_USERNAME;
-		cmd.password = this.settings.VNSKY_PASSWORD;
+		try {
+			const cmd = new VnSkyLoginReqCommand();
+			cmd.grantType = 'password';
+			cmd.clientIdentity = this.settings.VNSKY_CLIENT_IDENTITY;
+			cmd.username = this.settings.VNSKY_USERNAME;
+			cmd.password = this.settings.VNSKY_PASSWORD;
 
-		return this.commonService.callUrlEncodedApi(
-			new UrlEncodedApiRequest({
-				url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
-				logType: ActionLogTypeEnum.VNSKY_LOGIN,
-				payload: cmd,
-				responseModel: VnSkyLoginResResult,
-				headers: this.getVnSkyAuthHeader(),
-			}),
-		);
+			return this.commonService.callUrlEncodedApi(
+				new UrlEncodedApiRequest({
+					url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
+					logType: ActionLogTypeEnum.VNSKY_LOGIN,
+					payload: cmd,
+					responseModel: VnSkyLoginResResult,
+					headers: this.getVnSkyAuthHeader(),
+				}),
+			);
+		} catch (error) {
+			throw ExceptionFactory.vnSkyLoginError('Login vnsky error');
+		}
 	}
 
 	private async vnSkyRefreshToken(
 		refreshToken: string,
 	): Promise<VnSkyLoginResResult> {
-		const cmd = new VnSkyRefreshTokenReqCommand();
-		cmd.grantType = 'refresh_token';
-		cmd.refreshToken = refreshToken;
+		try {
+			const cmd = new VnSkyRefreshTokenReqCommand();
+			cmd.grantType = 'refresh_token';
+			cmd.refreshToken = refreshToken;
 
-		return this.commonService.callUrlEncodedApi(
-			new UrlEncodedApiRequest({
-				url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
-				logType: ActionLogTypeEnum.VNSKY_REFRESH_TOKEN,
-				payload: cmd,
-				responseModel: VnSkyLoginResResult,
-				headers: this.getVnSkyAuthHeader(),
-			}),
-		);
+			return this.commonService.callUrlEncodedApi(
+				new UrlEncodedApiRequest({
+					url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
+					logType: ActionLogTypeEnum.VNSKY_REFRESH_TOKEN,
+					payload: cmd,
+					responseModel: VnSkyLoginResResult,
+					headers: this.getVnSkyAuthHeader(),
+				}),
+			);
+		} catch (error) {
+			throw ExceptionFactory.vnSkyRefreshTokenError(
+				'Refresh token vnsky error',
+			);
+		}
 	}
 
 	async executeWithAuth<T>(apiCall: (token: string) => Promise<T>): Promise<T> {
@@ -86,7 +101,7 @@ export class VnSkyService {
 		try {
 			return await apiCall(token);
 		} catch (error) {
-			const status = error.status || error.response?.status;
+			const status = error.status || error?.response?.status;
 			if (status === 401 || status === 403) {
 				this.logger.warn(`VnSky 401 UnAuthorized. Retrying with new token...`);
 				token = await this.handleTokenExpired(true);

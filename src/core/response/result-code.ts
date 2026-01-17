@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { ErrorCategoryEnum } from '../enums/error-category.enum';
+import { Http } from 'winston/lib/winston/transports';
 
 export class ResultCode {
 	static readonly SUCCESS = new ResultCode(
@@ -72,6 +73,27 @@ export class ResultCode {
 		HttpStatus.INTERNAL_SERVER_ERROR,
 		ErrorCategoryEnum.UNKNOWN,
 	);
+
+  static readonly VN_SKY_LOGIN_ERROR = new ResultCode(
+    6000,
+    'VnSky login failed',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    ErrorCategoryEnum.THIRD_PARTY,
+  )
+
+  static readonly VN_SKY_REFRESH_TOKEN_ERROR = new ResultCode(
+    6001,
+    'VnSky refresh token failed',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    ErrorCategoryEnum.THIRD_PARTY,
+  )
+
+  static readonly VN_SKY_PROFILE_ERROR = new ResultCode(
+    6002,
+    'VnSky profile failed',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    ErrorCategoryEnum.THIRD_PARTY,
+  )
 
 	private constructor(
 		public readonly code: number,
