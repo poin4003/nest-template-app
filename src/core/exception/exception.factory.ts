@@ -49,4 +49,12 @@ export class ExceptionFactory {
   static vnSkyProfileError(detail: string) {
     return this.create(ResultCode.VN_SKY_PROFILE_ERROR, detail);
   }
+
+  static vnSkyCheckSimError(detail: string) {
+    return this.create(ResultCode.VN_SKY_CHECK_SIM_ERROR, detail);
+  }
+
+  static vnSkyOcrError(detail: string) {
+    return this.create(ResultCode.VN_SKY_OCR_ERROR, detail);
+  }
 }

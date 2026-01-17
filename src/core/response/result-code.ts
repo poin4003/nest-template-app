@@ -95,6 +95,20 @@ export class ResultCode {
     ErrorCategoryEnum.THIRD_PARTY,
   )
 
+  static readonly VN_SKY_CHECK_SIM_ERROR = new ResultCode(
+    6003,
+    'VnSky check sim failed',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    ErrorCategoryEnum.THIRD_PARTY,
+  )
+
+  static readonly VN_SKY_OCR_ERROR = new ResultCode(
+    6004,
+    'VnSky ocr failed',
+    HttpStatus.INTERNAL_SERVER_ERROR,
+    ErrorCategoryEnum.THIRD_PARTY,
+  )
+
 	private constructor(
 		public readonly code: number,
 		public readonly message: string,

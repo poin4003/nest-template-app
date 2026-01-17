@@ -2,19 +2,26 @@ import { CommonService } from '@/modules/common/service/common.service';
 import { Injectable } from '@nestjs/common';
 import {
 	VnSkyLoginReqCommand,
+	VnSkyOcrReqCommand,
 	VnSkyRefreshTokenReqCommand,
 } from './schemas/vn-sky.command';
-import { UrlEncodedApiRequest } from '@/modules/common/service/schemas/common.command';
+import {
+	FormDataApiRequest,
+	UrlEncodedApiRequest,
+} from '@/modules/common/service/schemas/common.command';
 import { AppConfigService } from '@/config/settings/app-config.service';
 import { ActionLogTypeEnum } from '@/modules/action-logs/action-log.enum';
 import {
+	VnSkyCheckSimResult,
 	VnSkyLoginResResult,
+	VnSkyOrcResult,
 	VnSkyProfileResult,
 } from './schemas/vn-sky.result';
 import { HTTPMethod } from '@/core/enums/http-method.enum';
 import { RedisService } from '@/core/redis/redis.service';
 import { MyLoggerService } from '@/common/logger/my-logger.service';
 import { ExceptionFactory } from '@/core/exception/exception.factory';
+import { VnSkyCheckSimQuery, VnSkyOcrQuery } from './schemas/vn-sky.query';
 
 const VNSKY_KEYS = {
 	ACCESS_TOKEN: 'VNSKY:ACCESS_TOKEN',
@@ -45,6 +52,54 @@ export class VnSkyService {
 				);
 			} catch (error) {
 				throw ExceptionFactory.vnSkyProfileError('Error profile');
+			}
+		});
+	}
+
+	async vnSkyCheckSim(query: VnSkyCheckSimQuery) {
+		return this.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callUrlEncodedApi(
+					new UrlEncodedApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/check-sim-active-status`,
+						method: HTTPMethod.GET,
+						logType: ActionLogTypeEnum.VNSKY_CHECK_SIM,
+						queryParams: { ...query },
+						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyCheckSimResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyProfileError('Error profile');
+			}
+		});
+	}
+
+	async vnSkyOrc(query: VnSkyOcrQuery, cmd: VnSkyOcrReqCommand) {
+		return this.executeWithAuth(async (token) => {
+			const { cardFront, cardBack, portrait, ...ortherFields } = cmd;
+
+			try {
+				return this.commonService.callMixedFormDataApi(
+					new FormDataApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/ocr-active`,
+						logType: ActionLogTypeEnum.VNSKY_OCR,
+						queryParams: { ...query },
+						payload: {
+              ...ortherFields,
+              data: JSON.stringify(ortherFields.data)
+            },
+						files: {
+							cardFront,
+							cardBack,
+							portrait,
+						},
+						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyOrcResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyOcrError('');
 			}
 		});
 	}

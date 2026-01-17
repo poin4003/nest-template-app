@@ -6,6 +6,7 @@ export class BaseApiRequestCommand<T> {
 	method?: HTTPMethod;
 	logType: ActionLogTypeEnum;
 	headers?: Record<string, string>;
+  queryParams?: Record<string, string>;
 	responseModel?: { new (...args: any[]): T };
 
 	constructor(init?: Partial<BaseApiRequestCommand<T>>) {

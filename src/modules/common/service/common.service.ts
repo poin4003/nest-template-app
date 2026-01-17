@@ -75,6 +75,49 @@ export class CommonService {
 		return this.executeRequest<T>(cmd, params, payloadLogStr, headers);
 	}
 
+	async callMixedFormDataApi<T>(cmd: FormDataApiRequest<T>): Promise<T> {
+		const form = new FormData();
+		const logPayload: any = { ...cmd.payload };
+
+		for (const key in cmd.payload) {
+			const value = cmd.payload[key];
+
+			const stringValue =
+				typeof value === 'object' ? JSON.stringify(value) : String(value);
+
+			form.append(key, stringValue, {
+				contentType: 'application/json', 
+			});
+		}
+
+		if (cmd.files) {
+			for (const key in cmd.files) {
+				const file = cmd.files[key];
+				if (file && file.buffer) {
+					form.append(key, file.buffer, {
+						filename: file.originalname || `${key}.jpg`,
+						contentType: file.mimetype || 'image/jpeg', 
+					});
+					logPayload[key] = `<File: ${file.originalname}>`;
+				}
+			}
+		}
+
+		const payloadLogStr = JSON.stringify(logPayload);
+
+		const finalHeaders = {
+			...form.getHeaders(),
+			...cmd.headers,
+		};
+
+		return this.executeRequest<T>(
+			cmd,
+			form.getBuffer(),
+			payloadLogStr,
+			finalHeaders,
+		);
+	}
+
 	private async executeRequest<T>(
 		cmd: BaseApiRequestCommand<T>,
 		body: any,
@@ -87,11 +130,19 @@ export class CommonService {
 		let status = ActionLogStatusEnum.SUCCESS;
 		let errorMsg = '';
 
+		let finalUrl = cmd.url;
+		if (cmd.queryParams && Object.keys(cmd.queryParams).length > 0) {
+			const queryStr = new URLSearchParams(cmd.queryParams).toString();
+			finalUrl = finalUrl.includes('?')
+				? `${finalUrl}&${queryStr}`
+				: `${finalUrl}?${queryStr}`;
+		}
+
 		try {
 			const response = await firstValueFrom(
 				this.httpService.request({
 					method: cmd.method || HTTPMethod.POST,
-					url: cmd.url,
+					url: finalUrl,
 					data: body,
 					headers: headers,
 				}),
