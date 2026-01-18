@@ -5,10 +5,10 @@ import { validate } from 'class-validator';
 import { AppConfigModule } from './config/settings/app-config.module';
 import { PrismaModule } from './core/database/prisma.module';
 import { RedisModule } from './core/redis/redis.module';
-import { BullModule } from '@nestjs/bull';
 import { AppConfigService } from './config/settings/app-config.service';
 import { ActionLogModule } from './modules/action-logs/action-log.module';
 import { VnSkyModule } from './modules/vn-sky/vn-sky.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
 	imports: [
@@ -19,13 +19,13 @@ import { VnSkyModule } from './modules/vn-sky/vn-sky.module';
 		BullModule.forRootAsync({
 			imports: [AppConfigModule],
 			inject: [AppConfigService],
-			useFactory: (settings: AppConfigService) => ({
-				redis: {
-					host: settings.REDIS_HOST,
-					port: settings.REDIS_PORT,
-					password: settings.REDIS_PASSWORD,
-				},
-			}),
+      useFactory: (settings: AppConfigService) => ({
+        connection: {
+          host: settings.REDIS_HOST,
+          port: settings.REDIS_PORT,
+          password: settings.REDIS_PASSWORD,
+        },
+      }),
 		}),
 		AppConfigModule,
 		PrismaModule,

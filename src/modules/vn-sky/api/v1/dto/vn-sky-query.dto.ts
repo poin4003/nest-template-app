@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class VnSkyCheckSimQueryDto {
 	@ApiProperty()
@@ -16,7 +16,6 @@ export class VnSkyOcrQueryDto {
 	@IsString()
 	cardType: string;
 }
-
 
 export class VnSkyGenContractNumberQueryDto {
 	@ApiProperty()
