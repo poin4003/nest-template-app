@@ -3,11 +3,12 @@ import { VnSkyService } from './service/vn-sky.service';
 import { CommonModule } from '../common/common.module';
 import { AppConfigModule } from '@/config/settings/app-config.module';
 import { VnSkyController as VnSkyControllerV1 } from './api/v1/controller/vn-sky.controller';
+import { VnSkyAuthService } from './service/vn-sky-auth.service';
 
 @Module({
 	imports: [CommonModule, AppConfigModule],
   controllers: [VnSkyControllerV1],
-	providers: [VnSkyService],
+	providers: [VnSkyService, VnSkyAuthService],
 	exports: [VnSkyService],
 })
 export class VnSkyModule {}

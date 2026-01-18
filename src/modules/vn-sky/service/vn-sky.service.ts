@@ -5,9 +5,7 @@ import {
 	VnSkyConfirmOtpCommand,
 	VnSkyGenContractCommand,
 	VnSkyGetOtpCommand,
-	VnSkyLoginReqCommand,
 	VnSkyOcrReqCommand,
-	VnSkyRefreshTokenReqCommand,
 } from './schemas/vn-sky.command';
 import {
 	FormDataApiRequest,
@@ -23,13 +21,10 @@ import {
 	VnSkyGenCustomerCodeResult,
 	VnSkyGenSecretKeyResult,
 	VnSkyGetOtpResult,
-	VnSkyLoginResResult,
 	VnSkyOrcResult,
 	VnSkyProfileResult,
 } from './schemas/vn-sky.result';
 import { HTTPMethod } from '@/core/enums/http-method.enum';
-import { RedisService } from '@/core/redis/redis.service';
-import { MyLoggerService } from '@/common/logger/my-logger.service';
 import { ExceptionFactory } from '@/core/exception/exception.factory';
 import {
 	VnSkyCheckSimQuery,
@@ -38,31 +33,25 @@ import {
 	VnSkyGenSecretKeyQuery,
 	VnSkyOcrQuery,
 } from './schemas/vn-sky.query';
-
-const VNSKY_KEYS = {
-	ACCESS_TOKEN: 'VNSKY:ACCESS_TOKEN',
-	REFRESH_TOKEN: 'VNSKY:REFRESH_TOKEN',
-	AUTH_LOCK: 'VNSKY:AUTH_LOCK',
-};
+import { VnSkyAuthService } from './vn-sky-auth.service';
 
 @Injectable()
 export class VnSkyService {
 	constructor(
 		private readonly commonService: CommonService,
 		private readonly settings: AppConfigService,
-		private readonly redis: RedisService,
-		private readonly logger: MyLoggerService,
+		private readonly vnSkyAuthService: VnSkyAuthService,
 	) {}
 
 	async vnSkyProfile() {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/api/auth/profile`,
 						method: HTTPMethod.GET,
 						logType: ActionLogTypeEnum.VNSKY_PROFILE,
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyProfileResult,
 					}),
 				);
@@ -73,7 +62,7 @@ export class VnSkyService {
 	}
 
 	async vnSkyCheckSim(query: VnSkyCheckSimQuery) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
@@ -81,7 +70,7 @@ export class VnSkyService {
 						method: HTTPMethod.GET,
 						logType: ActionLogTypeEnum.VNSKY_CHECK_SIM,
 						queryParams: { ...query },
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyCheckSimResult,
 					}),
 				);
@@ -92,7 +81,7 @@ export class VnSkyService {
 	}
 
 	async vnSkyOrc(query: VnSkyOcrQuery, cmd: VnSkyOcrReqCommand) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			const { cardFront, cardBack, portrait, ...ortherFields } = cmd;
 
 			try {
@@ -110,7 +99,7 @@ export class VnSkyService {
 							cardBack,
 							portrait,
 						},
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyOrcResult,
 					}),
 				);
@@ -121,14 +110,14 @@ export class VnSkyService {
 	}
 
 	async vnSkyGenCustomerCode(query: VnSkyGenCustomerCodeQuery) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-customer-code`,
 						logType: ActionLogTypeEnum.VNSKY_GEN_CUSTOMER_CODE,
 						queryParams: { ...query },
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyGenCustomerCodeResult,
 					}),
 				);
@@ -139,7 +128,7 @@ export class VnSkyService {
 	}
 
 	async vnSkyGenSecretKey(query: VnSkyGenSecretKeyQuery) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
@@ -147,7 +136,7 @@ export class VnSkyService {
 						method: HTTPMethod.GET,
 						logType: ActionLogTypeEnum.VNSKY_GEN_SECRET_KEY,
 						queryParams: { ...query },
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyGenSecretKeyResult,
 					}),
 				);
@@ -158,14 +147,14 @@ export class VnSkyService {
 	}
 
 	async vnSkyCheckProfile(cmd: VnSkyCheckProfileCommand) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callApi(
 					new JsonApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/check-8-condition-and-c06`,
 						logType: ActionLogTypeEnum.VNSKY_CHECK_PROFILE,
 						payload: cmd,
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 					}),
 				);
 			} catch (error) {
@@ -175,14 +164,14 @@ export class VnSkyService {
 	}
 
 	async vnSkyGenContractNumber(query: VnSkyGenContractNumberQuery) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-contract-no`,
 						logType: ActionLogTypeEnum.VNSKY_GEN_CONTRACT_NUMBER,
 						queryParams: { ...query },
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyGenContractNumberResult,
 					}),
 				);
@@ -193,14 +182,14 @@ export class VnSkyService {
 	}
 
 	async vnSkyGenContract(cmd: VnSkyGenContractCommand) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callApi(
 					new JsonApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-contract`,
 						logType: ActionLogTypeEnum.VNSKY_GEN_CONTRACT,
 						payload: cmd,
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyGenContractResult,
 					}),
 				);
@@ -211,14 +200,14 @@ export class VnSkyService {
 	}
 
 	async vnSkyGetOtp(cmd: VnSkyGetOtpCommand) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callApi(
 					new JsonApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/get-otp`,
 						logType: ActionLogTypeEnum.VNSKY_GET_OTP,
 						payload: cmd,
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 						responseModel: VnSkyGetOtpResult,
 					}),
 				);
@@ -229,155 +218,19 @@ export class VnSkyService {
 	}
 
 	async vnSkyConfirmOtp(cmd: VnSkyConfirmOtpCommand) {
-		return this.executeWithAuth(async (token) => {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			try {
 				return this.commonService.callApi(
 					new JsonApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/confirm-otp`,
 						logType: ActionLogTypeEnum.VNSKY_CONFIRM_OTP,
 						payload: cmd,
-						headers: this.getVnSkyHeader(token),
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
 					}),
 				);
 			} catch (error) {
 				throw ExceptionFactory.vnSkyConfirmOtpError('');
 			}
 		});
-	}
-
-	private async vnSkyLogin(): Promise<VnSkyLoginResResult> {
-		try {
-			const cmd = new VnSkyLoginReqCommand();
-			cmd.grantType = 'password';
-			cmd.clientIdentity = this.settings.VNSKY_CLIENT_IDENTITY;
-			cmd.username = this.settings.VNSKY_USERNAME;
-			cmd.password = this.settings.VNSKY_PASSWORD;
-
-			return this.commonService.callUrlEncodedApi(
-				new UrlEncodedApiRequest({
-					url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
-					logType: ActionLogTypeEnum.VNSKY_LOGIN,
-					payload: cmd,
-					responseModel: VnSkyLoginResResult,
-					headers: this.getVnSkyAuthHeader(),
-				}),
-			);
-		} catch (error) {
-			throw ExceptionFactory.vnSkyLoginError('Login vnsky error');
-		}
-	}
-
-	private async vnSkyRefreshToken(
-		refreshToken: string,
-	): Promise<VnSkyLoginResResult> {
-		try {
-			const cmd = new VnSkyRefreshTokenReqCommand();
-			cmd.grantType = 'refresh_token';
-			cmd.refreshToken = refreshToken;
-
-			return this.commonService.callUrlEncodedApi(
-				new UrlEncodedApiRequest({
-					url: `${this.settings.VNSKY_BASE_URL}/admin-service/public/oauth2/token`,
-					logType: ActionLogTypeEnum.VNSKY_REFRESH_TOKEN,
-					payload: cmd,
-					responseModel: VnSkyLoginResResult,
-					headers: this.getVnSkyAuthHeader(),
-				}),
-			);
-		} catch (error) {
-			throw ExceptionFactory.vnSkyRefreshTokenError(
-				'Refresh token vnsky error',
-			);
-		}
-	}
-
-	async executeWithAuth<T>(apiCall: (token: string) => Promise<T>): Promise<T> {
-		let token = await this.getValidToken();
-
-		try {
-			return await apiCall(token);
-		} catch (error) {
-			const status = error.status || error?.response?.status;
-			if (status === 401 || status === 403) {
-				this.logger.warn(`VnSky 401 UnAuthorized. Retrying with new token...`);
-				token = await this.handleTokenExpired(true);
-				return await apiCall(token);
-			}
-			throw error;
-		}
-	}
-
-	private async saveTokenToCache(data: VnSkyLoginResResult) {
-		const accessTtl = data.expiresIn > 60 ? data.expiresIn - 60 : 3500;
-		await this.redis.setEx(
-			VNSKY_KEYS.ACCESS_TOKEN,
-			data.accessToken,
-			accessTtl,
-		);
-
-		if (data.refreshToken) {
-			await this.redis.setEx(
-				VNSKY_KEYS.REFRESH_TOKEN,
-				data.refreshToken,
-				604800,
-			);
-		}
-		this.logger.log(
-			`Tokens cached successfully. AccessToken TTl: ${accessTtl}s`,
-		);
-	}
-
-	private async getValidToken(): Promise<string> {
-		const cacheAccessToken = await this.redis.get(VNSKY_KEYS.ACCESS_TOKEN);
-		if (cacheAccessToken) return cacheAccessToken;
-
-		return this.handleTokenExpired();
-	}
-
-	private async handleTokenExpired(forceLogin = false): Promise<string> {
-		const lockKey = VNSKY_KEYS.AUTH_LOCK;
-		const isLocked = await this.redis.set(lockKey, 'LOCKED', 10);
-
-		if (isLocked !== 'OK') {
-			await new Promise((resolve) => setTimeout(resolve, 1500));
-			const newToken = await this.redis.get(VNSKY_KEYS.ACCESS_TOKEN);
-			return newToken || this.getValidToken();
-		}
-
-		try {
-			if (!forceLogin) {
-				const refreshToken = await this.redis.get(VNSKY_KEYS.REFRESH_TOKEN);
-				if (refreshToken) {
-					try {
-						this.logger.log('Attempting to refresh VnSky token...');
-						const res = await this.vnSkyRefreshToken(refreshToken);
-						await this.saveTokenToCache(res);
-						return res.accessToken;
-					} catch (e) {
-						this.logger.error('Refresh token failed, falling back to login...');
-					}
-				}
-			}
-
-			this.logger.log('Login to VnSky...');
-			const loginRes = await this.vnSkyLogin();
-			await this.saveTokenToCache(loginRes);
-
-			return loginRes.accessToken;
-		} finally {
-			await this.redis.del(lockKey);
-		}
-	}
-
-	private getVnSkyAuthHeader() {
-		return {
-			authorization: `Basic ${this.settings.VNSKY_AUTHENTICATION_BASIC_CODE}`,
-		};
-	}
-
-	private getVnSkyHeader(accessToken: string) {
-		return {
-			authorization: `Bearer ${accessToken}`,
-		};
 	}
 }
