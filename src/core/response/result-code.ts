@@ -144,6 +144,20 @@ export class ResultCode {
 		ErrorCategoryEnum.THIRD_PARTY,
 	);
 
+	static readonly VN_SKY_GET_OTP = new ResultCode(
+		6009,
+		'VnSky get otp failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
+	static readonly VN_SKY_CONFIRM_OTP = new ResultCode(
+		6010,
+		'VnSky confirm otp failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
 	private constructor(
 		public readonly code: number,
 		public readonly message: string,

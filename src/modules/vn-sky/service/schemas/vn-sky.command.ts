@@ -92,57 +92,85 @@ export class VnSkyCheckProfileCommand {
 }
 
 export class VnSkyPhoneObject {
-  @IsString()
-  phoneNumber: string;
+	@IsString()
+	phoneNumber: string;
 
-  @IsString()
-  serialSim: string;
+	@IsString()
+	serialSim: string;
 
-  @IsString()
-  packagePlan: string;
+	@IsString()
+	packagePlan: string;
 }
 
 export class VnSkyGenContractCommand {
-  codeDecree13: [string];
+	codeDecree13: [string];
 
-  @IsString()
-  contractNo: string;
+	@IsString()
+	contractNo: string;
 
-  @IsString()
-  customerId: string;
+	@IsString()
+	customerId: string;
 
-  @IsString()
-  ccdvvt: string;
+	@IsString()
+	ccdvvt: string;
 
-  @IsString()
-  contractDate: string;
+	@IsString()
+	contractDate: string;
 
-  @IsString()
-  customerName: string;
+	@IsString()
+	customerName: string;
 
-  @IsString()
-  gender: string;
+	@IsString()
+	gender: string;
 
-  @IsString()
-  birthDate: string;
+	@IsString()
+	birthDate: string;
 
-  @IsString()
-  idNo: string;
+	@IsString()
+	idNo: string;
 
-  @IsString()
-  idDate: string;
+	@IsString()
+	idDate: string;
 
-  @IsString()
-  idPlace: string;
+	@IsString()
+	idPlace: string;
 
-  @IsString()
-  address: string;
+	@IsString()
+	address: string;
 
-  @IsString()
-  type: string;
+	@IsString()
+	type: string;
 
-  phoneLists: [VnSkyPhoneObject];
+	phoneLists: [VnSkyPhoneObject];
 
-  @IsString()
-  deviceToken: string;
+	@IsString()
+	deviceToken: string;
+}
+
+export class VnSkyGetOtpCommand {
+	@IsString()
+	isdn: string;
+
+	@IsString()
+	idEkyc: string;
+}
+
+export class VnSkyConfirmOtpCommand {
+	@IsString()
+	id: string;
+
+	@IsString()
+	idEkyc: string;
+
+	@IsString()
+	isdn: string;
+
+	@IsString()
+	transactionId: string;
+
+	@IsString()
+	otp: string;
+
+	@IsString()
+	idNo: string;
 }

@@ -29,22 +29,6 @@ export class VnSkyRefreshTokenReqDto {
 	refreshToken: string;
 }
 
-export class VnSkyCheckSimQueryDto {
-	@ApiProperty()
-	@IsString()
-	serial: string;
-
-	@ApiProperty()
-	@IsString()
-	isdn: string;
-}
-
-export class VnSkyOcrQueryDto {
-	@ApiProperty()
-	@IsString()
-	cardType: string;
-}
-
 export class VnSkyOcrReqDto {
 	@ApiProperty({ type: 'string', format: 'binary' })
 	cardFront: any;
@@ -66,18 +50,6 @@ export class VnSkyOcrReqDto {
 	@ApiProperty()
 	@IsString()
 	serial: string;
-}
-
-export class VnSkyGenCustomerCodeQueryDto {
-	@ApiProperty()
-	@IsString()
-	idNo: string;
-}
-
-export class VnSkyGenSecretKeyQueryDto {
-	@ApiProperty()
-	@IsString()
-	idKyc: string;
 }
 
 export class VnSkyCheckProfileReqDto {
@@ -132,16 +104,6 @@ export class VnSkyCheckProfileReqDto {
 	@ApiProperty()
 	@IsString()
 	sex: string;
-}
-
-export class VnSkyGenContractNumberQueryDto {
-	@ApiProperty()
-	@IsString()
-	idNo: string;
-
-	@ApiProperty()
-	@IsString()
-	activeType: string;
 }
 
 export class VnSkyPhoneObjectDto {
@@ -218,4 +180,40 @@ export class VnSkyGenContractDto {
 	@ApiProperty()
 	@IsString()
 	deviceToken: string;
+}
+
+export class VnSkyGetOtpReqDto {
+	@ApiProperty()
+  @IsString()
+  isdn: string;
+
+	@ApiProperty()
+  @IsString()
+  idEkyc: string;
+}
+
+export class VnSkyConfirmOtpReqDto {
+	@ApiProperty()
+	@IsString()
+	id: string;
+
+	@ApiProperty()
+	@IsString()
+	idEkyc: string;
+
+	@ApiProperty()
+	@IsString()
+	isdn: string;
+
+	@ApiProperty()
+	@IsString()
+	transactionId: string;
+
+	@ApiProperty()
+	@IsString()
+	otp: string;
+
+	@ApiProperty()
+	@IsString()
+	idNo: string;
 }

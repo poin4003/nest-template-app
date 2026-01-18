@@ -77,4 +77,12 @@ export class ExceptionFactory {
 	static vnSkyGenContractError(detail: string) {
 		return this.create(ResultCode.VN_SKY_GEN_CONTRACT, detail);
 	}
+
+	static vnSkyGetOtpError(detail: string) {
+		return this.create(ResultCode.VN_SKY_GET_OTP, detail);
+	}
+
+	static vnSkyConfirmOtpError(detail: string) {
+		return this.create(ResultCode.VN_SKY_CONFIRM_OTP, detail);
+	}
 }

@@ -2,7 +2,9 @@ import { CommonService } from '@/modules/common/service/common.service';
 import { Injectable } from '@nestjs/common';
 import {
 	VnSkyCheckProfileCommand,
+	VnSkyConfirmOtpCommand,
 	VnSkyGenContractCommand,
+	VnSkyGetOtpCommand,
 	VnSkyLoginReqCommand,
 	VnSkyOcrReqCommand,
 	VnSkyRefreshTokenReqCommand,
@@ -18,6 +20,9 @@ import {
 	VnSkyCheckSimResult,
 	VnSkyGenContractNumberResult,
 	VnSkyGenContractResult,
+	VnSkyGenCustomerCodeResult,
+	VnSkyGenSecretKeyResult,
+	VnSkyGetOtpResult,
 	VnSkyLoginResResult,
 	VnSkyOrcResult,
 	VnSkyProfileResult,
@@ -124,6 +129,7 @@ export class VnSkyService {
 						logType: ActionLogTypeEnum.VNSKY_GEN_CUSTOMER_CODE,
 						queryParams: { ...query },
 						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyGenCustomerCodeResult,
 					}),
 				);
 			} catch (error) {
@@ -142,6 +148,7 @@ export class VnSkyService {
 						logType: ActionLogTypeEnum.VNSKY_GEN_SECRET_KEY,
 						queryParams: { ...query },
 						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyGenSecretKeyResult,
 					}),
 				);
 			} catch (error) {
@@ -194,11 +201,46 @@ export class VnSkyService {
 						logType: ActionLogTypeEnum.VNSKY_GEN_CONTRACT,
 						payload: cmd,
 						headers: this.getVnSkyHeader(token),
-            responseModel: VnSkyGenContractResult
+						responseModel: VnSkyGenContractResult,
 					}),
 				);
 			} catch (error) {
 				throw ExceptionFactory.vnSkyGenContractError('');
+			}
+		});
+	}
+
+	async vnSkyGetOtp(cmd: VnSkyGetOtpCommand) {
+		return this.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callApi(
+					new JsonApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/get-otp`,
+						logType: ActionLogTypeEnum.VNSKY_GET_OTP,
+						payload: cmd,
+						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyGetOtpResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyGetOtpError('');
+			}
+		});
+	}
+
+	async vnSkyConfirmOtp(cmd: VnSkyConfirmOtpCommand) {
+		return this.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callApi(
+					new JsonApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/confirm-otp`,
+						logType: ActionLogTypeEnum.VNSKY_CONFIRM_OTP,
+						payload: cmd,
+						headers: this.getVnSkyHeader(token),
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyConfirmOtpError('');
 			}
 		});
 	}

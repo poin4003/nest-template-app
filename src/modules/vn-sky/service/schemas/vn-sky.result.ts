@@ -132,6 +132,22 @@ export class VnSkyCheckProfileResult {
 	c06SuccessMessage: string;
 }
 
+export class VnSkyGenCustomerCodeResult {
+	@IsString()
+	customerCode?: string;
+}
+
+export class VnSkyGenSecretKeyResult {
+	@IsString()
+	expiredAt?: string;
+
+	@IsString()
+	publicKey?: string;
+
+	@IsString()
+	sessionToken?: string;
+}
+
 export class VnSkyGenContractNumberResult {
 	@IsString()
 	contractNo: string;
@@ -146,4 +162,18 @@ export class VnSkyGenContractResult {
 
 	@IsNumber()
 	type?: number;
+}
+
+export class VnSkyGetOtpResult {
+	@IsString()
+	id?: string;
+
+	@IsString()
+	idEkyc?: string;
+
+	@IsString()
+	isdn?: string;
+
+	@IsString()
+	transactionId?: string;
 }

@@ -11,14 +11,11 @@ import {
 import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import {
 	VnSkyCheckProfileReqDto,
-	VnSkyCheckSimQueryDto,
+	VnSkyConfirmOtpReqDto,
 	VnSkyGenContractDto,
-	VnSkyGenContractNumberQueryDto,
-	VnSkyGenCustomerCodeQueryDto,
-	VnSkyGenSecretKeyQueryDto,
-	VnSkyOcrQueryDto,
+	VnSkyGetOtpReqDto,
 	VnSkyOcrReqDto,
-} from '../dto/vn-sky-res.dto';
+} from '../dto/vn-sky-req.dto';
 import {
 	VnSkyCheckSimQuery,
 	VnSkyGenContractNumberQuery,
@@ -29,10 +26,13 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
 	VnSkyCheckProfileCommand,
+	VnSkyConfirmOtpCommand,
 	VnSkyGenContractCommand,
+	VnSkyGetOtpCommand,
 	VnSkyKit,
 	VnSkyOcrReqCommand,
 } from '@/modules/vn-sky/service/schemas/vn-sky.command';
+import { VnSkyCheckSimQueryDto, VnSkyGenContractNumberQueryDto, VnSkyGenCustomerCodeQueryDto, VnSkyGenSecretKeyQueryDto, VnSkyOcrQueryDto } from '../dto/vn-sky-query.dto';
 
 @Controller('api/v1/vn-sky')
 export class VnSkyController extends BaseController {
@@ -176,5 +176,33 @@ export class VnSkyController extends BaseController {
 		const data = await this.vnSkyService.vnSkyGenContract(cmd);
 
 		return this.OK(data, 'Vnsky check profile success');
+	}
+
+	@Post('/get-otp')
+	@ApiOperation({ summary: 'VnSky get otp' })
+	async vnSkyGetOtp(@Body() dto: VnSkyGetOtpReqDto) {
+    const cmd = new VnSkyGetOtpCommand();
+    cmd.idEkyc = dto.idEkyc;
+    cmd.isdn = dto.isdn;
+
+		const data = await this.vnSkyService.vnSkyGetOtp(cmd);
+
+		return this.OK(data, 'Vnsky get otp success');
+	}
+
+	@Post('/confirm-otp')
+	@ApiOperation({ summary: 'VnSky confirm otp' })
+	async vnSkyConfirmOtp(@Body() dto: VnSkyConfirmOtpReqDto) {
+    const cmd = new VnSkyConfirmOtpCommand();
+    cmd.id = dto.id;
+    cmd.idEkyc = dto.idEkyc;
+    cmd.isdn = dto.isdn;
+    cmd.transactionId = dto.transactionId;
+    cmd.otp = dto.otp;
+    cmd.idNo = dto.idNo;
+
+		const data = await this.vnSkyService.vnSkyConfirmOtp(cmd);
+
+		return this.OK(data, 'Vnsky confirm otp success');
 	}
 }
