@@ -38,35 +38,43 @@ export class ExceptionFactory {
 		return this.create(ResultCode.USER_AUTH_ERROR, detail);
 	}
 
-  static vnSkyLoginError(detail: string) {
-    return this.create(ResultCode.VN_SKY_LOGIN_ERROR, detail);
-  }
+	static vnSkyLoginError(detail: string) {
+		return this.create(ResultCode.VN_SKY_LOGIN_ERROR, detail);
+	}
 
-  static vnSkyRefreshTokenError(detail: string) {
-    return this.create(ResultCode.VN_SKY_REFRESH_TOKEN_ERROR, detail);
-  }
+	static vnSkyRefreshTokenError(detail: string) {
+		return this.create(ResultCode.VN_SKY_REFRESH_TOKEN_ERROR, detail);
+	}
 
-  static vnSkyProfileError(detail: string) {
-    return this.create(ResultCode.VN_SKY_PROFILE_ERROR, detail);
-  }
+	static vnSkyProfileError(detail: string) {
+		return this.create(ResultCode.VN_SKY_PROFILE_ERROR, detail);
+	}
 
-  static vnSkyCheckSimError(detail: string) {
-    return this.create(ResultCode.VN_SKY_CHECK_SIM_ERROR, detail);
-  }
+	static vnSkyCheckSimError(detail: string) {
+		return this.create(ResultCode.VN_SKY_CHECK_SIM_ERROR, detail);
+	}
 
-  static vnSkyOcrError(detail: string) {
-    return this.create(ResultCode.VN_SKY_OCR_ERROR, detail);
-  }
+	static vnSkyOcrError(detail: string) {
+		return this.create(ResultCode.VN_SKY_OCR_ERROR, detail);
+	}
 
-  static vnSkyGenCustomerCodeError(detail: string) {
-    return this.create(ResultCode.VN_SKY_GEN_CUSTOMER_CODE_ERROR, detail);
-  }
+	static vnSkyGenCustomerCodeError(detail: string) {
+		return this.create(ResultCode.VN_SKY_GEN_CUSTOMER_CODE_ERROR, detail);
+	}
 
-  static vnSkyGenSecretKeyError(detail: string) {
-    return this.create(ResultCode.VN_SKY_GEN_SECRET_KEY_ERROR, detail);
-  }
+	static vnSkyGenSecretKeyError(detail: string) {
+		return this.create(ResultCode.VN_SKY_GEN_SECRET_KEY_ERROR, detail);
+	}
 
-  static vnSkyCheckProfileError(detail: string) {
-    return this.create(ResultCode.VN_SKY_CHECK_PROFILE_ERROR, detail);
-  }
+	static vnSkyCheckProfileError(detail: string) {
+		return this.create(ResultCode.VN_SKY_CHECK_PROFILE_ERROR, detail);
+	}
+
+	static vnSkyGenContractNumberError(detail: string) {
+		return this.create(ResultCode.VN_SKY_GEN_CONTRACT_NUMBER, detail);
+	}
+
+	static vnSkyGenContractError(detail: string) {
+		return this.create(ResultCode.VN_SKY_GEN_CONTRACT, detail);
+	}
 }

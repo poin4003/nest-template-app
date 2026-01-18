@@ -74,61 +74,75 @@ export class ResultCode {
 		ErrorCategoryEnum.UNKNOWN,
 	);
 
-  static readonly VN_SKY_LOGIN_ERROR = new ResultCode(
-    6000,
-    'VnSky login failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_LOGIN_ERROR = new ResultCode(
+		6000,
+		'VnSky login failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_REFRESH_TOKEN_ERROR = new ResultCode(
-    6001,
-    'VnSky refresh token failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_REFRESH_TOKEN_ERROR = new ResultCode(
+		6001,
+		'VnSky refresh token failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_PROFILE_ERROR = new ResultCode(
-    6002,
-    'VnSky profile failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_PROFILE_ERROR = new ResultCode(
+		6002,
+		'VnSky profile failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_CHECK_SIM_ERROR = new ResultCode(
-    6003,
-    'VnSky check sim failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_CHECK_SIM_ERROR = new ResultCode(
+		6003,
+		'VnSky check sim failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_OCR_ERROR = new ResultCode(
-    6004,
-    'VnSky ocr failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_OCR_ERROR = new ResultCode(
+		6004,
+		'VnSky ocr failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_GEN_CUSTOMER_CODE_ERROR = new ResultCode(
-    6005,
-    'VnSky generate customer code failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_GEN_CUSTOMER_CODE_ERROR = new ResultCode(
+		6005,
+		'VnSky generate customer code failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_GEN_SECRET_KEY_ERROR = new ResultCode(
-    6006,
-    'VnSky generate secret key failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_GEN_SECRET_KEY_ERROR = new ResultCode(
+		6006,
+		'VnSky generate secret key failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
-  static readonly VN_SKY_CHECK_PROFILE_ERROR = new ResultCode(
-    6007,
-    'VnSky check profile failed',
-    HttpStatus.SERVICE_UNAVAILABLE,
-    ErrorCategoryEnum.THIRD_PARTY,
-  )
+	static readonly VN_SKY_CHECK_PROFILE_ERROR = new ResultCode(
+		6007,
+		'VnSky check profile failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
+	static readonly VN_SKY_GEN_CONTRACT_NUMBER = new ResultCode(
+		6008,
+		'VnSky gen contract number failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
+	static readonly VN_SKY_GEN_CONTRACT = new ResultCode(
+		6008,
+		'VnSky gen contract failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
 
 	private constructor(
 		public readonly code: number,

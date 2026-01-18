@@ -90,3 +90,59 @@ export class VnSkyCheckProfileCommand {
 	@IsString()
 	sex: string;
 }
+
+export class VnSkyPhoneObject {
+  @IsString()
+  phoneNumber: string;
+
+  @IsString()
+  serialSim: string;
+
+  @IsString()
+  packagePlan: string;
+}
+
+export class VnSkyGenContractCommand {
+  codeDecree13: [string];
+
+  @IsString()
+  contractNo: string;
+
+  @IsString()
+  customerId: string;
+
+  @IsString()
+  ccdvvt: string;
+
+  @IsString()
+  contractDate: string;
+
+  @IsString()
+  customerName: string;
+
+  @IsString()
+  gender: string;
+
+  @IsString()
+  birthDate: string;
+
+  @IsString()
+  idNo: string;
+
+  @IsString()
+  idDate: string;
+
+  @IsString()
+  idPlace: string;
+
+  @IsString()
+  address: string;
+
+  @IsString()
+  type: string;
+
+  phoneLists: [VnSkyPhoneObject];
+
+  @IsString()
+  deviceToken: string;
+}

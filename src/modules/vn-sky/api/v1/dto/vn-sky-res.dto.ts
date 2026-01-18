@@ -41,8 +41,8 @@ export class VnSkyCheckSimQueryDto {
 
 export class VnSkyOcrQueryDto {
 	@ApiProperty()
-  @IsString()
-  cardType: string
+	@IsString()
+	cardType: string;
 }
 
 export class VnSkyOcrReqDto {
@@ -132,4 +132,90 @@ export class VnSkyCheckProfileReqDto {
 	@ApiProperty()
 	@IsString()
 	sex: string;
+}
+
+export class VnSkyGenContractNumberQueryDto {
+	@ApiProperty()
+	@IsString()
+	idNo: string;
+
+	@ApiProperty()
+	@IsString()
+	activeType: string;
+}
+
+export class VnSkyPhoneObjectDto {
+	@ApiProperty()
+	@IsString()
+	phoneNumber: string;
+
+	@ApiProperty()
+	@IsString()
+	serialSim: string;
+
+	@ApiProperty()
+	@IsString()
+	packagePlan: string;
+}
+
+export class VnSkyGenContractDto {
+	@ApiProperty()
+	codeDecree13: [string];
+
+	@ApiProperty()
+	@IsString()
+	contractNo: string;
+
+	@ApiProperty()
+	@IsString()
+	customerId: string;
+
+	@ApiProperty()
+	@IsString()
+	ccdvvt: string;
+
+	@ApiProperty()
+	@IsString()
+	contractDate: string;
+
+	@ApiProperty()
+	@IsString()
+	customerName: string;
+
+	@ApiProperty()
+	@IsString()
+	gender: string;
+
+	@ApiProperty()
+	@IsString()
+	birthDate: string;
+
+	@ApiProperty()
+	@IsString()
+	idNo: string;
+
+	@ApiProperty()
+	@IsString()
+	idDate: string;
+
+	@ApiProperty()
+	@IsString()
+	idPlace: string;
+
+	@ApiProperty()
+	@IsString()
+	address: string;
+
+	@ApiProperty()
+	@IsString()
+	type: string;
+
+	@ApiProperty({
+		type: [VnSkyPhoneObjectDto],
+	})
+	phoneLists: [VnSkyPhoneObjectDto];
+
+	@ApiProperty()
+	@IsString()
+	deviceToken: string;
 }

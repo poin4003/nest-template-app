@@ -10,8 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import {
-  VnSkyCheckProfileReqDto,
+	VnSkyCheckProfileReqDto,
 	VnSkyCheckSimQueryDto,
+	VnSkyGenContractDto,
+	VnSkyGenContractNumberQueryDto,
 	VnSkyGenCustomerCodeQueryDto,
 	VnSkyGenSecretKeyQueryDto,
 	VnSkyOcrQueryDto,
@@ -19,13 +21,15 @@ import {
 } from '../dto/vn-sky-res.dto';
 import {
 	VnSkyCheckSimQuery,
+	VnSkyGenContractNumberQuery,
 	VnSkyGenCustomerCodeQuery,
 	VnSkyGenSecretKeyQuery,
 	VnSkyOcrQuery,
 } from '@/modules/vn-sky/service/schemas/vn-sky.query';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import {
-  VnSkyCheckProfileCommand,
+	VnSkyCheckProfileCommand,
+	VnSkyGenContractCommand,
 	VnSkyKit,
 	VnSkyOcrReqCommand,
 } from '@/modules/vn-sky/service/schemas/vn-sky.command';
@@ -117,22 +121,59 @@ export class VnSkyController extends BaseController {
 	@Post('/check-profile')
 	@ApiOperation({ summary: 'VnSky check profile' })
 	async vnSkyCheckProfile(@Body() dto: VnSkyCheckProfileReqDto) {
-    const cmd = new VnSkyCheckProfileCommand();
-    cmd.address = dto.address;
-    cmd.birthday = dto.birthday;
-    cmd.city = dto.city;
-    cmd.district = dto.district;
-    cmd.ward = dto.ward;
-    cmd.document = dto.document;
-    cmd.expiry = dto.expiry;
-    cmd.id = dto.id;
-    cmd.idEkyc = dto.idEkyc;
-    cmd.issueBy = dto.issueBy;
-    cmd.issueDate = dto.issueDate;
-    cmd.name = dto.name;
-    cmd.sex = dto.sex;
+		const cmd = new VnSkyCheckProfileCommand();
+		cmd.address = dto.address;
+		cmd.birthday = dto.birthday;
+		cmd.city = dto.city;
+		cmd.district = dto.district;
+		cmd.ward = dto.ward;
+		cmd.document = dto.document;
+		cmd.expiry = dto.expiry;
+		cmd.id = dto.id;
+		cmd.idEkyc = dto.idEkyc;
+		cmd.issueBy = dto.issueBy;
+		cmd.issueDate = dto.issueDate;
+		cmd.name = dto.name;
+		cmd.sex = dto.sex;
 
 		const data = await this.vnSkyService.vnSkyCheckProfile(cmd);
+
+		return this.OK(data, 'Vnsky check profile success');
+	}
+
+	@Post('/gen-contract-number')
+	@ApiOperation({ summary: 'VnSky generate contract number' })
+	async vnSkyGenContractNumber(@Query() query: VnSkyGenContractNumberQueryDto) {
+		const queryInput = new VnSkyGenContractNumberQuery();
+		queryInput.idNo = query.idNo;
+		queryInput.activeType = query.activeType;
+
+		const data = await this.vnSkyService.vnSkyGenContractNumber(queryInput);
+
+		return this.OK(data, 'Vnsky generate contract type success');
+	}
+
+	@Post('/gen-contract')
+	@ApiOperation({ summary: 'VnSky gen contract' })
+	async vnSkyGenContract(@Body() dto: VnSkyGenContractDto) {
+		const cmd = new VnSkyGenContractCommand();
+    cmd.codeDecree13 = dto.codeDecree13;
+    cmd.contractNo = dto.contractNo;
+    cmd.customerId = dto.customerId;
+    cmd.ccdvvt = dto.ccdvvt;
+    cmd.contractDate = dto.contractDate;
+    cmd.customerName = dto.customerName;
+    cmd.gender = dto.gender;
+    cmd.birthDate = dto.birthDate;
+    cmd.idNo = dto.idNo;
+    cmd.idDate = dto.idDate;
+    cmd.idPlace = dto.idPlace;
+    cmd.address = dto.address;
+    cmd.type = dto.type;
+    cmd.phoneLists = dto.phoneLists;
+    cmd.deviceToken = dto.deviceToken;
+
+		const data = await this.vnSkyService.vnSkyGenContract(cmd);
 
 		return this.OK(data, 'Vnsky check profile success');
 	}

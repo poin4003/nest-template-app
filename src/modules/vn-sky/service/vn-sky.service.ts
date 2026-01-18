@@ -1,7 +1,8 @@
 import { CommonService } from '@/modules/common/service/common.service';
 import { Injectable } from '@nestjs/common';
 import {
-  VnSkyCheckProfileCommand,
+	VnSkyCheckProfileCommand,
+	VnSkyGenContractCommand,
 	VnSkyLoginReqCommand,
 	VnSkyOcrReqCommand,
 	VnSkyRefreshTokenReqCommand,
@@ -15,6 +16,8 @@ import { AppConfigService } from '@/config/settings/app-config.service';
 import { ActionLogTypeEnum } from '@/modules/action-logs/action-log.enum';
 import {
 	VnSkyCheckSimResult,
+	VnSkyGenContractNumberResult,
+	VnSkyGenContractResult,
 	VnSkyLoginResResult,
 	VnSkyOrcResult,
 	VnSkyProfileResult,
@@ -23,7 +26,13 @@ import { HTTPMethod } from '@/core/enums/http-method.enum';
 import { RedisService } from '@/core/redis/redis.service';
 import { MyLoggerService } from '@/common/logger/my-logger.service';
 import { ExceptionFactory } from '@/core/exception/exception.factory';
-import { VnSkyCheckSimQuery, VnSkyGenCustomerCodeQuery, VnSkyGenSecretKeyQuery, VnSkyOcrQuery } from './schemas/vn-sky.query';
+import {
+	VnSkyCheckSimQuery,
+	VnSkyGenContractNumberQuery,
+	VnSkyGenCustomerCodeQuery,
+	VnSkyGenSecretKeyQuery,
+	VnSkyOcrQuery,
+} from './schemas/vn-sky.query';
 
 const VNSKY_KEYS = {
 	ACCESS_TOKEN: 'VNSKY:ACCESS_TOKEN',
@@ -88,9 +97,9 @@ export class VnSkyService {
 						logType: ActionLogTypeEnum.VNSKY_OCR,
 						queryParams: { ...query },
 						payload: {
-              ...ortherFields,
-              data: JSON.stringify(ortherFields.data)
-            },
+							...ortherFields,
+							data: JSON.stringify(ortherFields.data),
+						},
 						files: {
 							cardFront,
 							cardBack,
@@ -106,9 +115,9 @@ export class VnSkyService {
 		});
 	}
 
-  async vnSkyGenCustomerCode(query: VnSkyGenCustomerCodeQuery) {
+	async vnSkyGenCustomerCode(query: VnSkyGenCustomerCodeQuery) {
 		return this.executeWithAuth(async (token) => {
-      try {
+			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-customer-code`,
@@ -116,47 +125,83 @@ export class VnSkyService {
 						queryParams: { ...query },
 						headers: this.getVnSkyHeader(token),
 					}),
-        );
-      } catch (error) {
-        throw ExceptionFactory.vnSkyGenCustomerCodeError('')
-      }
-    });
-  }
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyGenCustomerCodeError('');
+			}
+		});
+	}
 
-  async vnSkyGenSecretKey(query: VnSkyGenSecretKeyQuery) {
+	async vnSkyGenSecretKey(query: VnSkyGenSecretKeyQuery) {
 		return this.executeWithAuth(async (token) => {
-      try {
+			try {
 				return this.commonService.callUrlEncodedApi(
 					new UrlEncodedApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-secret-key`,
-            method: HTTPMethod.GET,
+						method: HTTPMethod.GET,
 						logType: ActionLogTypeEnum.VNSKY_GEN_SECRET_KEY,
 						queryParams: { ...query },
 						headers: this.getVnSkyHeader(token),
 					}),
-        );
-      } catch (error) {
-        throw ExceptionFactory.vnSkyGenSecretKeyError('')
-      }
-    });
-  }
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyGenSecretKeyError('');
+			}
+		});
+	}
 
-  async vnSkyCheckProfile(cmd: VnSkyCheckProfileCommand) {
+	async vnSkyCheckProfile(cmd: VnSkyCheckProfileCommand) {
 		return this.executeWithAuth(async (token) => {
-      try {
+			try {
 				return this.commonService.callApi(
 					new JsonApiRequest({
 						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/check-8-condition-and-c06`,
 						logType: ActionLogTypeEnum.VNSKY_CHECK_PROFILE,
-            payload: cmd,
+						payload: cmd,
 						headers: this.getVnSkyHeader(token),
 					}),
-        );
-      } catch (error) {
-        throw ExceptionFactory.vnSkyCheckProfileError('')
-      }
-    });
-  }
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyCheckProfileError('');
+			}
+		});
+	}
+
+	async vnSkyGenContractNumber(query: VnSkyGenContractNumberQuery) {
+		return this.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callUrlEncodedApi(
+					new UrlEncodedApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-contract-no`,
+						logType: ActionLogTypeEnum.VNSKY_GEN_CONTRACT_NUMBER,
+						queryParams: { ...query },
+						headers: this.getVnSkyHeader(token),
+						responseModel: VnSkyGenContractNumberResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyGenContractNumberError('');
+			}
+		});
+	}
+
+	async vnSkyGenContract(cmd: VnSkyGenContractCommand) {
+		return this.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callApi(
+					new JsonApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-contract`,
+						logType: ActionLogTypeEnum.VNSKY_GEN_CONTRACT,
+						payload: cmd,
+						headers: this.getVnSkyHeader(token),
+            responseModel: VnSkyGenContractResult
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyGenContractError('');
+			}
+		});
+	}
 
 	private async vnSkyLogin(): Promise<VnSkyLoginResResult> {
 		try {

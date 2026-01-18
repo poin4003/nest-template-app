@@ -22,3 +22,11 @@ export class VnSkyGenSecretKeyQuery {
 	@IsString()
 	idKyc: string;
 }
+
+export class VnSkyGenContractNumberQuery {
+  @IsString()
+  idNo: string;
+
+  @IsString()
+  activeType: string;
+}

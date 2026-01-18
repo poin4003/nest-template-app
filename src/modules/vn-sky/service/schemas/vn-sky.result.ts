@@ -131,3 +131,19 @@ export class VnSkyCheckProfileResult {
 	@IsString()
 	c06SuccessMessage: string;
 }
+
+export class VnSkyGenContractNumberResult {
+	@IsString()
+	contractNo: string;
+}
+
+export class VnSkyGenContractResult {
+	@IsString()
+	contractId?: string;
+
+	@IsString()
+	contractPNGImagePath?: string;
+
+	@IsNumber()
+	type?: number;
+}

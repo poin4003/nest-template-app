@@ -8,6 +8,8 @@ export enum ActionLogTypeEnum {
   VNSKY_GEN_CUSTOMER_CODE = 7,
   VNSKY_GEN_SECRET_KEY = 8,
   VNSKY_CHECK_PROFILE = 9,
+  VNSKY_GEN_CONTRACT_NUMBER = 10,
+  VNSKY_GEN_CONTRACT = 11,
 }
 
 export enum ActionLogStatusEnum {
