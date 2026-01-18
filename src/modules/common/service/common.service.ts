@@ -24,8 +24,16 @@ export class CommonService {
 	) {}
 
 	async callApi<T>(cmd: JsonApiRequest<T>): Promise<T> {
-		const payloadLogStr = JSON.stringify(cmd.payload);
-		return this.executeRequest<T>(cmd, cmd.payload, payloadLogStr, cmd.headers);
+		const plainPayload = instanceToPlain(cmd.payload);
+
+		const payloadLogStr = JSON.stringify(plainPayload);
+
+		const headers = {
+			'Content-Type': 'application/json',
+			...cmd.headers,
+		};
+
+		return this.executeRequest<T>(cmd, plainPayload, payloadLogStr, headers);
 	}
 
 	async callFormDataApi<T>(cmd: FormDataApiRequest<T>): Promise<T> {
@@ -86,7 +94,7 @@ export class CommonService {
 				typeof value === 'object' ? JSON.stringify(value) : String(value);
 
 			form.append(key, stringValue, {
-				contentType: 'application/json', 
+				contentType: 'application/json',
 			});
 		}
 
@@ -96,7 +104,7 @@ export class CommonService {
 				if (file && file.buffer) {
 					form.append(key, file.buffer, {
 						filename: file.originalname || `${key}.jpg`,
-						contentType: file.mimetype || 'image/jpeg', 
+						contentType: file.mimetype || 'image/jpeg',
 					});
 					logPayload[key] = `<File: ${file.originalname}>`;
 				}

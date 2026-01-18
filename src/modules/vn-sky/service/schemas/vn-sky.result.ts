@@ -126,3 +126,8 @@ export class VnSkyOrcResult {
 	@IsString()
 	document?: string = '1';
 }
+
+export class VnSkyCheckProfileResult {
+	@IsString()
+	c06SuccessMessage: string;
+}

@@ -5,6 +5,9 @@ export enum ActionLogTypeEnum {
 	VNSKY_PROFILE = 4,
   VNSKY_CHECK_SIM = 5,
   VNSKY_OCR = 6,
+  VNSKY_GEN_CUSTOMER_CODE = 7,
+  VNSKY_GEN_SECRET_KEY = 8,
+  VNSKY_CHECK_PROFILE = 9,
 }
 
 export enum ActionLogStatusEnum {

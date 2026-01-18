@@ -57,4 +57,16 @@ export class ExceptionFactory {
   static vnSkyOcrError(detail: string) {
     return this.create(ResultCode.VN_SKY_OCR_ERROR, detail);
   }
+
+  static vnSkyGenCustomerCodeError(detail: string) {
+    return this.create(ResultCode.VN_SKY_GEN_CUSTOMER_CODE_ERROR, detail);
+  }
+
+  static vnSkyGenSecretKeyError(detail: string) {
+    return this.create(ResultCode.VN_SKY_GEN_SECRET_KEY_ERROR, detail);
+  }
+
+  static vnSkyCheckProfileError(detail: string) {
+    return this.create(ResultCode.VN_SKY_CHECK_PROFILE_ERROR, detail);
+  }
 }

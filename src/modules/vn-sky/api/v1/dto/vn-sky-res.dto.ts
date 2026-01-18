@@ -6,41 +6,41 @@ export class VnSkyLoginReqDto {
 	@IsString()
 	grantType: string = 'password';
 
-	@ApiProperty({ example: 'client_id' })
+	@ApiProperty()
 	@IsString()
 	clientIdentity: string = 'ECOTE';
 
-	@ApiProperty({ example: 'user01' })
+	@ApiProperty()
 	@IsString()
 	username: string;
 
-	@ApiProperty({ example: '123456' })
+	@ApiProperty()
 	@IsString()
 	password: string;
 }
 
 export class VnSkyRefreshTokenReqDto {
-	@ApiProperty({ example: 'refresh_token' })
+	@ApiProperty()
 	@IsString()
 	grantType: string = 're';
 
-	@ApiProperty({ example: 'refresh_token' })
+	@ApiProperty()
 	@IsString()
 	refreshToken: string;
 }
 
 export class VnSkyCheckSimQueryDto {
-	@ApiProperty({ example: 'serial' })
+	@ApiProperty()
 	@IsString()
 	serial: string;
 
-	@ApiProperty({ example: 'isdn' })
+	@ApiProperty()
 	@IsString()
 	isdn: string;
 }
 
 export class VnSkyOcrQueryDto {
-	@ApiProperty({ example: 'cardType' })
+	@ApiProperty()
   @IsString()
   cardType: string
 }
@@ -59,11 +59,77 @@ export class VnSkyOcrReqDto {
 	@IsString()
 	enableActiveMore3: string;
 
-	@ApiProperty({ example: 'serial' })
+	@ApiProperty()
 	@IsString()
 	isdn: string;
 
-	@ApiProperty({ example: 'isdn' })
+	@ApiProperty()
 	@IsString()
 	serial: string;
+}
+
+export class VnSkyGenCustomerCodeQueryDto {
+	@ApiProperty()
+	@IsString()
+	idNo: string;
+}
+
+export class VnSkyGenSecretKeyQueryDto {
+	@ApiProperty()
+	@IsString()
+	idKyc: string;
+}
+
+export class VnSkyCheckProfileReqDto {
+	@ApiProperty()
+	@IsString()
+	address: string;
+
+	@ApiProperty()
+	@IsString()
+	birthday: string;
+
+	@ApiProperty()
+	@IsString()
+	city: string;
+
+	@ApiProperty()
+	@IsString()
+	district: string;
+
+	@ApiProperty()
+	@IsString()
+	ward: string;
+
+	@ApiProperty()
+	@IsString()
+	document: string;
+
+	@ApiProperty()
+	@IsString()
+	expiry: string;
+
+	@ApiProperty()
+	@IsString()
+	id: string;
+
+	@ApiProperty()
+	@IsString()
+	idEkyc: string;
+
+	@ApiProperty()
+	@IsString()
+	issueBy: string;
+
+	@ApiProperty()
+	@IsString()
+	issueDate: string;
+
+	@ApiProperty()
+	@IsString()
+	name: string;
+
+	@ApiProperty()
+	@IsString()
+	sex: string;
 }

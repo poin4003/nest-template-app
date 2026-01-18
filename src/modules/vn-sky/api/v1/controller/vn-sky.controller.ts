@@ -10,16 +10,25 @@ import {
 } from '@nestjs/common';
 import { ApiConsumes, ApiOperation } from '@nestjs/swagger';
 import {
+  VnSkyCheckProfileReqDto,
 	VnSkyCheckSimQueryDto,
+	VnSkyGenCustomerCodeQueryDto,
+	VnSkyGenSecretKeyQueryDto,
 	VnSkyOcrQueryDto,
 	VnSkyOcrReqDto,
 } from '../dto/vn-sky-res.dto';
 import {
 	VnSkyCheckSimQuery,
+	VnSkyGenCustomerCodeQuery,
+	VnSkyGenSecretKeyQuery,
 	VnSkyOcrQuery,
 } from '@/modules/vn-sky/service/schemas/vn-sky.query';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { VnSkyKit, VnSkyOcrReqCommand } from '@/modules/vn-sky/service/schemas/vn-sky.command';
+import {
+  VnSkyCheckProfileCommand,
+	VnSkyKit,
+	VnSkyOcrReqCommand,
+} from '@/modules/vn-sky/service/schemas/vn-sky.command';
 
 @Controller('api/v1/vn-sky')
 export class VnSkyController extends BaseController {
@@ -48,7 +57,7 @@ export class VnSkyController extends BaseController {
 	}
 
 	@Post('/ocr')
-  @ApiConsumes('multipart/form-data')
+	@ApiConsumes('multipart/form-data')
 	@ApiOperation({ summary: 'VnSky ocr' })
 	@UseInterceptors(
 		FileFieldsInterceptor([
@@ -74,12 +83,57 @@ export class VnSkyController extends BaseController {
 		cmd.cardBack = files.cardBack[0];
 		cmd.portrait = files.portrait[0];
 		cmd.enableActiveMore3 = dto.enableActiveMore3;
-    cmd.data = new VnSkyKit();
+		cmd.data = new VnSkyKit();
 		cmd.data.isdn = dto.isdn;
 		cmd.data.serial = dto.serial;
 
 		const result = await this.vnSkyService.vnSkyOrc(query, cmd);
 
 		return this.OK(result, 'VnSky orc success');
+	}
+
+	@Post('/gen-customer-code')
+	@ApiOperation({ summary: 'VnSky generate customer code' })
+	async vnSkyGenCustomerCode(@Query() query: VnSkyGenCustomerCodeQueryDto) {
+		const queryInput = new VnSkyGenCustomerCodeQuery();
+		queryInput.idNo = query.idNo;
+
+		const data = await this.vnSkyService.vnSkyGenCustomerCode(queryInput);
+
+		return this.OK(data, 'Vnsky generate customer code success');
+	}
+
+	@Post('/gen-secret-key')
+	@ApiOperation({ summary: 'VnSky generate secret key' })
+	async vnSkyGenSecretKey(@Query() query: VnSkyGenSecretKeyQueryDto) {
+		const queryInput = new VnSkyGenSecretKeyQuery();
+		queryInput.idKyc = query.idKyc;
+
+		const data = await this.vnSkyService.vnSkyGenSecretKey(queryInput);
+
+		return this.OK(data, 'Vnsky generate customer code success');
+	}
+
+	@Post('/check-profile')
+	@ApiOperation({ summary: 'VnSky check profile' })
+	async vnSkyCheckProfile(@Body() dto: VnSkyCheckProfileReqDto) {
+    const cmd = new VnSkyCheckProfileCommand();
+    cmd.address = dto.address;
+    cmd.birthday = dto.birthday;
+    cmd.city = dto.city;
+    cmd.district = dto.district;
+    cmd.ward = dto.ward;
+    cmd.document = dto.document;
+    cmd.expiry = dto.expiry;
+    cmd.id = dto.id;
+    cmd.idEkyc = dto.idEkyc;
+    cmd.issueBy = dto.issueBy;
+    cmd.issueDate = dto.issueDate;
+    cmd.name = dto.name;
+    cmd.sex = dto.sex;
+
+		const data = await this.vnSkyService.vnSkyCheckProfile(cmd);
+
+		return this.OK(data, 'Vnsky check profile success');
 	}
 }
