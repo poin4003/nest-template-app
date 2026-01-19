@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
-import { OrderStatusEnum, OrderStepEnum, OrderTypeEnum } from '../order.enum';
 import { ProfileResult } from '@/modules/profile/service/schemas/profile.result';
+import { OrderStatusEnum, OrderStepEnum, OrderTypeEnum } from '../../order.enum';
 
 export class OrderResult {
 	@IsUUID()

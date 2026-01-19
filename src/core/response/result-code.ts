@@ -1,6 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
 import { ErrorCategoryEnum } from '../enums/error-category.enum';
-import { Http } from 'winston/lib/winston/transports';
 
 export class ResultCode {
 	static readonly SUCCESS = new ResultCode(

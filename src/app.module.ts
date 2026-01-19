@@ -9,6 +9,7 @@ import { AppConfigService } from './config/settings/app-config.service';
 import { ActionLogModule } from './modules/action-logs/action-log.module';
 import { VnSkyModule } from './modules/vn-sky/vn-sky.module';
 import { BullModule } from '@nestjs/bullmq';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
 	imports: [
@@ -19,20 +20,21 @@ import { BullModule } from '@nestjs/bullmq';
 		BullModule.forRootAsync({
 			imports: [AppConfigModule],
 			inject: [AppConfigService],
-      useFactory: (settings: AppConfigService) => ({
-        connection: {
-          host: settings.REDIS_HOST,
-          port: settings.REDIS_PORT,
-          password: settings.REDIS_PASSWORD,
-        },
-      }),
+			useFactory: (settings: AppConfigService) => ({
+				connection: {
+					host: settings.REDIS_HOST,
+					port: settings.REDIS_PORT,
+					password: settings.REDIS_PASSWORD,
+				},
+			}),
 		}),
 		AppConfigModule,
 		PrismaModule,
 		RedisModule,
 		LoggerModule,
-    ActionLogModule,
-    VnSkyModule,
+		ActionLogModule,
+		VnSkyModule,
+		OrderModule,
 	],
 })
 export class AppModule {}

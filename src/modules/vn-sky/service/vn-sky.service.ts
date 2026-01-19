@@ -80,7 +80,7 @@ export class VnSkyService {
 		});
 	}
 
-	async vnSkyOrc(query: VnSkyOcrQuery, cmd: VnSkyOcrReqCommand) {
+	async vnSkyOcr(query: VnSkyOcrQuery, cmd: VnSkyOcrReqCommand) {
 		return this.vnSkyAuthService.executeWithAuth(async (token) => {
 			const { cardFront, cardBack, portrait, ...ortherFields } = cmd;
 

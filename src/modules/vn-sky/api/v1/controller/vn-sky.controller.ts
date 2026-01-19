@@ -91,7 +91,7 @@ export class VnSkyController extends BaseController {
 		cmd.data.isdn = dto.isdn;
 		cmd.data.serial = dto.serial;
 
-		const result = await this.vnSkyService.vnSkyOrc(query, cmd);
+		const result = await this.vnSkyService.vnSkyOcr(query, cmd);
 
 		return this.OK(result, 'VnSky orc success');
 	}
