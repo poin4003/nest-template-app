@@ -13,6 +13,7 @@ import {
 } from '@/modules/vn-sky/service/schemas/vn-sky.command';
 import { getFileFromPath } from '@/common/utils/file.util';
 import { OrderStepSuccessEvent } from '../events/order-step-success.event';
+import { VnSkyProfileDataRaw } from '../../types/vnsky-profile-data-raw.type';
 
 export class OcrCommand {
 	constructor(public readonly orderId: string) {}
@@ -41,29 +42,60 @@ export class OcrHandler implements ICommandHandler<OcrCommand> {
 			const profile = order.profiles;
 			if (!profile) throw ExceptionFactory.dataNotFound(`profile: ${orderId}`);
 
-			const ocr_query = new VnSkyOcrQuery();
-			ocr_query.cardType = '1';
+			const ocrQuery = new VnSkyOcrQuery();
+			ocrQuery.cardType = '1';
 
-			const ocr_cmd = new VnSkyOcrReqCommand();
+			const ocrCmd = new VnSkyOcrReqCommand();
 
 			if (!profile.frontPath)
 				throw ExceptionFactory.dataNotFound(`Missing card front`);
-			ocr_cmd.cardFront = getFileFromPath(profile.frontPath);
+			ocrCmd.cardFront = getFileFromPath(profile.frontPath);
 			if (!profile.backPath)
 				throw ExceptionFactory.dataNotFound(`Missing card back`);
-			ocr_cmd.cardBack = getFileFromPath(profile.backPath);
+			ocrCmd.cardBack = getFileFromPath(profile.backPath);
 			if (!profile.portrait)
 				throw ExceptionFactory.dataNotFound(`Missing card portrait`);
-			ocr_cmd.portrait = getFileFromPath(profile.portrait);
+			ocrCmd.portrait = getFileFromPath(profile.portrait);
 
 			const dataKit = new VnSkyKit();
 			dataKit.isdn = order.phoneNumber;
 			dataKit.serial = order.serial;
 
-			ocr_cmd.enableActiveMore3 = '0';
-			ocr_cmd.data = dataKit;
+			ocrCmd.enableActiveMore3 = '0';
+			ocrCmd.data = dataKit;
 
-			const result = await this.vnSkyService.vnSkyOcr(ocr_query, ocr_cmd);
+			const result = await this.vnSkyService.vnSkyOcr(ocrQuery, ocrCmd);
+			const profileData = new VnSkyProfileDataRaw({
+				idNo: result.id,
+				address: result.address,
+				birthday: result.birthday,
+				name: result.name,
+				idEkyc: result.idEkyc,
+				issueBy: result.issueBy,
+				issueDate: result.issueDate,
+				sex: result.sex,
+				document: result.document,
+				nationality: result.nationality,
+				city: result.city,
+				district: result.district,
+				ward: result.ward,
+				listPhoneNumber:
+					result.listPhoneNumber?.map((item) => ({
+						phoneNumber: item.phoneNumber,
+						serialSim: item.serialSim,
+						packagePlan: item.packagePlan,
+					})) ?? [],
+				totalSim: result.totalSim,
+				checkSendOtp: result.checkSendOtp,
+			});
+
+      await this.prisma.profile.update({
+        where: { orderId: orderId },
+        data: {
+          name: profileData.name,
+          rawData: profileData as any,
+        }
+      })
 
 			this.eventBus.publish(
 				new OrderStepSuccessEvent(orderId, OrderStepEnum.OCR, result),

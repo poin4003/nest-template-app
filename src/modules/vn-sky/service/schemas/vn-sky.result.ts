@@ -1,5 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
+import { VnSkyPhoneObject } from './vn-sky.command';
 
 export class VnSkyLoginResResult {
 	@Expose({ name: 'access_token' })
@@ -125,6 +126,27 @@ export class VnSkyOrcResult {
 
 	@IsString()
 	document?: string = '1';
+
+  @IsString()
+  nationality?: string;
+
+  @IsString()
+  city?: string;
+
+  @IsString()
+  district?: string;
+
+  @IsString()
+  ward?: string;
+
+	@Expose({ name: 'list_phoneNumber' })
+  listPhoneNumber?: VnSkyPhoneObject[];
+
+  @Expose({ name: 'total_sim' })
+  totalSim?: number
+
+  @Expose({ name: 'check_sendOTP' })
+  checkSendOtp?: boolean
 }
 
 export class VnSkyCheckProfileResult {

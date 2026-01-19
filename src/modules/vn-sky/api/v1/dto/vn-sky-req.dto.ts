@@ -173,9 +173,11 @@ export class VnSkyGenContractDto {
 	type: string;
 
 	@ApiProperty({
-		type: [VnSkyPhoneObjectDto],
+		type: VnSkyPhoneObjectDto, 
+		isArray: true, 
+		description: 'Danh sách các số điện thoại và serial sim',
 	})
-	phoneLists: [VnSkyPhoneObjectDto];
+	phoneLists: VnSkyPhoneObjectDto[];
 
 	@ApiProperty()
 	@IsString()
@@ -184,12 +186,12 @@ export class VnSkyGenContractDto {
 
 export class VnSkyGetOtpReqDto {
 	@ApiProperty()
-  @IsString()
-  isdn: string;
+	@IsString()
+	isdn: string;
 
 	@ApiProperty()
-  @IsString()
-  idEkyc: string;
+	@IsString()
+	idEkyc: string;
 }
 
 export class VnSkyConfirmOtpReqDto {

@@ -38,13 +38,14 @@ model Order {
   phoneNumber String @map("phone_number")
   serial      String
 
-  otp    String?
-  step   Int     @default(1)
-  status Int     @default(1)
-  type   Int     @default(1)
+  step   Int @default(1)
+  status Int @default(1)
+  type   Int @default(1)
 
   errorCode    Int?    @map("error_code")
   errorMessage String? @map("error_message")
+
+  rawData Json? @map("raw_data")
 
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @map("updated_at")
@@ -66,7 +67,7 @@ model Profile {
   order   Order  @relation(fields: [orderId], references: [id])
 
   name      String?
-  rawData   String? @map("raw_data") @db.Text
+  rawData   Json?   @map("raw_data")
   frontPath String? @map("front_path")
   backPath  String? @map("back_path")
   portrait  String?

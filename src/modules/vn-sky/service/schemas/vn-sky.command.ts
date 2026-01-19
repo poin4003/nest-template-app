@@ -141,7 +141,7 @@ export class VnSkyGenContractCommand {
 	@IsString()
 	type: string;
 
-	phoneLists: [VnSkyPhoneObject];
+	phoneLists: VnSkyPhoneObject[];
 
 	@IsString()
 	deviceToken: string;

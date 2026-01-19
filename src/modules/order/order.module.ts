@@ -10,6 +10,8 @@ import { CheckSimBeforeRegHandler } from './cqrs/commands/check-sim-before-reg.h
 import { GetOrdersHandler } from './cqrs/queries/get-orders.handler';
 import { OcrHandler } from './cqrs/commands/ocr.handler';
 import { UpdateOrderHandler } from './cqrs/commands/update-order.handler';
+import { GenCustomerCodeHandler } from './cqrs/commands/gen-customer-code.handler';
+import { GenSecretKeyHandler } from './cqrs/commands/gen-secret-key.handler';
 
 @Module({
 	imports: [CqrsModule, PrismaModule, VnSkyModule],
@@ -21,6 +23,8 @@ import { UpdateOrderHandler } from './cqrs/commands/update-order.handler';
 		GetOrdersHandler,
 		OcrHandler,
 		UpdateOrderHandler,
+    GenCustomerCodeHandler,
+    GenSecretKeyHandler,
 		OrderRepository,
 	],
 })

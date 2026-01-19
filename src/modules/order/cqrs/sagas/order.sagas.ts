@@ -9,6 +9,8 @@ import { OrderStepFailedEvent } from '../events/order-step-failed.event';
 import { CheckSimBeforeRegCommand } from '../commands/check-sim-before-reg.handler';
 import { UpdateOrderCommand } from '../commands/update-order.handler';
 import { OcrCommand } from '../commands/ocr.handler';
+import { GenCustomerCodeCommand } from '../commands/gen-customer-code.handler';
+import { GenSecretKeyCommand } from '../commands/gen-secret-key.handler';
 
 @Injectable()
 export class OrderSagas {
@@ -56,9 +58,11 @@ export class OrderSagas {
 						break;
 					case OrderStepEnum.OCR:
 						this.logger.log(`Dispatching GEN_CUSTOMER_CODE for ${orderId}`);
+            commands.push(new GenCustomerCodeCommand(orderId));
 						break;
 					case OrderStepEnum.GENERATE_CUSTOMER_CODE:
 						this.logger.log(`Dispatching CHECK_PROFILE for ${orderId}`);
+            commands.push(new GenSecretKeyCommand(orderId));
 						break;
 					case OrderStepEnum.CHECK_PROFILE:
 						this.logger.log(

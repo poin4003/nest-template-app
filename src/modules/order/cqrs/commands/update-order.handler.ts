@@ -43,7 +43,6 @@ export class UpdateOrderHandler implements ICommandHandler<UpdateOrderCommand> {
       data: {
         step: updateData.step ?? undefined,
         status: updateData.status ?? undefined,
-        otp: updateData.otp ?? undefined,
         note: newNote,
         description: fullNote,
         updatedAt: new Date(),
