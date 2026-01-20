@@ -14,6 +14,9 @@ export class VnSkyOrderDataRaw {
   contractPNGImagePath: string;
   type: number;
 
+	pckCode: string;
+	pckName: string;
+
   constructor(partial: Partial<VnSkyOrderDataRaw>) {
 		Object.assign(this, partial);
 	}

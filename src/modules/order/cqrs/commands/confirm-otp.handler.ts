@@ -17,7 +17,7 @@ export class ConfirmOtpCommand {
 }
 
 @CommandHandler(ConfirmOtpCommand)
-export class ConfitmOtpHandler implements ICommandHandler<ConfirmOtpCommand> {
+export class ConfirmOtpHandler implements ICommandHandler<ConfirmOtpCommand> {
 	constructor(
 		private readonly vnSkyService: VnSkyService,
 		private readonly prisma: PrismaService,

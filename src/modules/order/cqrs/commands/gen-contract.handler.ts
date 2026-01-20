@@ -10,7 +10,7 @@ import { OrderStepEnum } from '../../order.enum';
 import { ResultCode } from '@/core/response/result-code';
 import { MyException } from '@/core/exception/my.exception';
 import { OrderStepFailedEvent } from '../events/order-step-failed.event';
-import { VnSkyGenContractCommand } from '@/modules/vn-sky/service/schemas/vn-sky.command';
+import { VnSkyGenContractCommand, VnSkyPhoneObject } from '@/modules/vn-sky/service/schemas/vn-sky.command';
 import dayjs from 'dayjs';
 
 export class GenContractCommand {
@@ -44,6 +44,11 @@ export class GenContractHandler implements ICommandHandler<GenContractCommand> {
 
 			const orderDataRaw = new VnSkyOrderDataRaw(order?.rawData as any);
 
+      const simObject = new VnSkyPhoneObject();
+      simObject.phoneNumber = order.phoneNumber;
+      simObject.serialSim = order.serial;
+      simObject.packagePlan = orderDataRaw.pckCode;
+
 			const genContractCmd = new VnSkyGenContractCommand();
 			genContractCmd.codeDecree13 = this.settings.VNSKY_CODE_DECREE_13;
 			genContractCmd.contractNo = orderDataRaw.contractNo;
@@ -58,7 +63,7 @@ export class GenContractHandler implements ICommandHandler<GenContractCommand> {
 			genContractCmd.idPlace = profileDataRaw.issueBy;
 			genContractCmd.address = profileDataRaw.address;
 			genContractCmd.type = this.settings.VNSKY_CONTRACT_TYPE;
-			genContractCmd.phoneLists = profileDataRaw.listPhoneNumber;
+			genContractCmd.phoneLists = [simObject];
 			genContractCmd.deviceToken = this.settings.VNSKY_DEVICE_TOKEN;
 
 			const result = await this.vnSkyService.vnSkyGenContract(genContractCmd);

@@ -2,6 +2,7 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { PrismaService } from '@/core/database/prisma.service';
 import { OrderStatusEnum, OrderStepEnum } from '../../order.enum';
 import { OrderStartedEvent } from '../events/order-started.event';
+import { ExceptionFactory } from '@/core/exception/exception.factory';
 
 export class StartOrderCommand {
 	constructor(
@@ -24,6 +25,15 @@ export class StartOrderHandler implements ICommandHandler<StartOrderCommand> {
 		const { phoneNumber, serial, cardFrontPath, cardBackPath, portraitPath } =
 			command;
 
+		const orderExist = await this.prisma.order.findFirst({
+			where: { phoneNumber: phoneNumber, status: OrderStatusEnum.SUCCESS },
+		});
+
+		if (!orderExist)
+			throw ExceptionFactory.dataAlreadyExists(
+				`Sim are already reg or exists: ${phoneNumber}`,
+			);
+
 		const order = await this.prisma.order.create({
 			data: {
 				phoneNumber,
@@ -41,8 +51,8 @@ export class StartOrderHandler implements ICommandHandler<StartOrderCommand> {
 			},
 		});
 
-    this.eventBus.publish(new OrderStartedEvent(order.id));
+		this.eventBus.publish(new OrderStartedEvent(order.id));
 
-    return order;
+		return order;
 	}
 }

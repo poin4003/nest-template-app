@@ -8,6 +8,7 @@ import { ResultCode } from '@/core/response/result-code';
 import { OrderStepSuccessEvent } from '../events/order-step-success.event';
 import { MyException } from '@/core/exception/my.exception';
 import { OrderStepFailedEvent } from '../events/order-step-failed.event';
+import { VnSkyOrderDataRaw } from '../../types/vnsky-order-data-raw.type';
 
 export class CheckSimBeforeRegCommand {
 	constructor(public readonly orderId: string) {}
@@ -36,11 +37,18 @@ export class CheckSimBeforeRegHandler implements ICommandHandler<CheckSimBeforeR
 			query.serial = order.serial;
 
 			const result = await this.vnSkyService.vnSkyCheckSim(query);
+
+			const existingData = (order?.rawData as any) || {};
+			const orderData = new VnSkyOrderDataRaw({
+				...existingData,
+				pckCode: result.pckCode,
+				pckName: result.pckName,
+			});
+
 			await this.prisma.order.update({
 				where: { id: orderId },
 				data: {
-					step: OrderStepEnum.CHECK_SIM_BEFORE_REG,
-					note: 'Check sim success!',
+					rawData: orderData as any,
 				},
 			});
 

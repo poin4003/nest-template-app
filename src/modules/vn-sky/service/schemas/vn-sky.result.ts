@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
-import { VnSkyPhoneObject } from './vn-sky.command';
 
 export class VnSkyLoginResResult {
 	@Expose({ name: 'access_token' })
@@ -140,7 +139,7 @@ export class VnSkyOrcResult {
 	ward?: string;
 
 	@Expose({ name: 'list_phoneNumber' })
-	listPhoneNumber?: VnSkyPhoneObject[];
+	listPhoneNumber?: string[];
 
 	@Expose({ name: 'total_sim' })
 	totalSim?: number;

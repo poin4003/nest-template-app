@@ -1,5 +1,3 @@
-import { VnSkyPhoneObject } from '@/modules/vn-sky/service/schemas/vn-sky.command';
-
 export class VnSkyProfileDataRaw {
 	idNo: string;
 	address: string;
@@ -15,7 +13,7 @@ export class VnSkyProfileDataRaw {
 	city: string;
 	district: string;
 	ward: string;
-	listPhoneNumber: VnSkyPhoneObject[];
+	listPhoneNumber: string[];
 	totalSim: number;
 	checkSendOtp: boolean;
 

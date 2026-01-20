@@ -79,12 +79,7 @@ export class OcrHandler implements ICommandHandler<OcrCommand> {
 				city: result.city,
 				district: result.district,
 				ward: result.ward,
-				listPhoneNumber:
-					result.listPhoneNumber?.map((item) => ({
-						phoneNumber: item.phoneNumber,
-						serialSim: item.serialSim,
-						packagePlan: item.packagePlan,
-					})) ?? [],
+				listPhoneNumber: result.listPhoneNumber,
 				totalSim: result.totalSim,
 				checkSendOtp: result.checkSendOtp,
 			});
