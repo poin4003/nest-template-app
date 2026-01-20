@@ -27,33 +27,42 @@ export class GenCustomerCodeHandler implements ICommandHandler<GenCustomerCodeCo
 		const { orderId } = command;
 
 		try {
-			const profile = await this.prisma.profile.findUnique({
-				where: { orderId: orderId },
+			const order = await this.prisma.order.findUnique({
+				where: { id: orderId },
+				include: {
+					profiles: true,
+				},
 			});
 
-			if (!profile) throw ExceptionFactory.dataNotFound(`profile with orderId: ${orderId}`);
-			const profileDataRaw = new VnSkyProfileDataRaw(
-				profile?.rawData as any,
-			);
+			if (!order) throw ExceptionFactory.dataNotFound(`order: ${orderId}`);
+			const profile = order.profiles;
+			if (!profile) throw ExceptionFactory.dataNotFound(`profile: ${orderId}`);
+			const profileDataRaw = new VnSkyProfileDataRaw(profile?.rawData as any);
 
 			const genCCQuery = new VnSkyGenCustomerCodeQuery();
 			genCCQuery.idNo = profileDataRaw.idNo;
 
 			const result = await this.vnSkyService.vnSkyGenCustomerCode(genCCQuery);
 
+			const existingData = (order?.rawData as any) || {};
 			const orderData = new VnSkyOrderDataRaw({
+				...existingData,
 				customerCode: result.customerCode,
 			});
 
-			await this.prisma.profile.update({
-				where: { orderId: orderId },
+			await this.prisma.order.update({
+				where: { id: orderId },
 				data: {
 					rawData: orderData as any,
 				},
 			});
 
 			this.eventBus.publish(
-				new OrderStepSuccessEvent(orderId, OrderStepEnum.GENERATE_CUSTOMER_CODE, result),
+				new OrderStepSuccessEvent(
+					orderId,
+					OrderStepEnum.GENERATE_CUSTOMER_CODE,
+					result,
+				),
 			);
 		} catch (error) {
 			let errorCode: number = ResultCode.ERROR.code;

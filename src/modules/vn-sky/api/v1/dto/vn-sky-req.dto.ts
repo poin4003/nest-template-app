@@ -122,7 +122,7 @@ export class VnSkyPhoneObjectDto {
 
 export class VnSkyGenContractDto {
 	@ApiProperty()
-	codeDecree13: [string];
+	codeDecree13: string[];
 
 	@ApiProperty()
 	@IsString()

@@ -12,6 +12,9 @@ import { OcrHandler } from './cqrs/commands/ocr.handler';
 import { UpdateOrderHandler } from './cqrs/commands/update-order.handler';
 import { GenCustomerCodeHandler } from './cqrs/commands/gen-customer-code.handler';
 import { GenSecretKeyHandler } from './cqrs/commands/gen-secret-key.handler';
+import { CheckProfileHandler } from './cqrs/commands/check-profile.handler';
+import { GetOtpHandler } from './cqrs/commands/get-otp.handler';
+import { ConfitmOtpHandler } from './cqrs/commands/confirm-otp.handler';
 
 @Module({
 	imports: [CqrsModule, PrismaModule, VnSkyModule],
@@ -25,6 +28,9 @@ import { GenSecretKeyHandler } from './cqrs/commands/gen-secret-key.handler';
 		UpdateOrderHandler,
     GenCustomerCodeHandler,
     GenSecretKeyHandler,
+    CheckProfileHandler,
+    GetOtpHandler,
+    ConfitmOtpHandler,
 		OrderRepository,
 	],
 })

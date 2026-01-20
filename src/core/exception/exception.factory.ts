@@ -85,4 +85,16 @@ export class ExceptionFactory {
 	static vnSkyConfirmOtpError(detail: string) {
 		return this.create(ResultCode.VN_SKY_CONFIRM_OTP, detail);
 	}
+
+	static vnSkySubmitContractSignatureError(detail: string) {
+		return this.create(ResultCode.VN_SKY_SUBMIT_CONTRACT_SIGNATURE, detail);
+	}
+
+	static vnSkyContractSigningCheckerError(detail: string) {
+		return this.create(ResultCode.VN_SKY_CONTRACT_SIGNING_CHECKER, detail);
+	}
+
+	static vnSkyActivateError(detail: string) {
+		return this.create(ResultCode.VN_SKY_ACTIVATE, detail);
+	}
 }

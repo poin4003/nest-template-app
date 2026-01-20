@@ -139,6 +139,13 @@ export class CommonService {
 		let errorMsg = '';
 
 		let finalUrl = cmd.url;
+
+		if (cmd.pathParams) {
+			Object.entries(cmd.pathParams).forEach(([key, value]) => {
+				finalUrl = finalUrl.replace(`:${key}`, String(value));
+			});
+		}
+
 		if (cmd.queryParams && Object.keys(cmd.queryParams).length > 0) {
 			const queryStr = new URLSearchParams(cmd.queryParams).toString();
 			finalUrl = finalUrl.includes('?')

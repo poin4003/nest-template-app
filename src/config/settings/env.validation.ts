@@ -1,6 +1,12 @@
 import { IntersectionType } from '@nestjs/mapped-types';
-import { plainToInstance, Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, validateSync } from 'class-validator';
+import { plainToInstance, Transform, Type } from 'class-transformer';
+import {
+	IsArray,
+	IsEnum,
+	IsNumber,
+	IsString,
+	validateSync,
+} from 'class-validator';
 
 enum Environment {
 	Development = 'development',
@@ -59,17 +65,40 @@ class VnSkyPartnerEnvironment {
 	@IsString()
 	VNSKY_BASE_URL: string = 'http://localhost:8000';
 
-  @IsString()
-  VNSKY_AUTHENTICATION_BASIC_CODE: string = '';
+	@IsString()
+	VNSKY_AUTHENTICATION_BASIC_CODE: string = '';
+
+	@IsString()
+	VNSKY_CLIENT_IDENTITY: string = '';
+
+	@IsString()
+	VNSKY_USERNAME: string = '';
+
+	@IsString()
+	VNSKY_PASSWORD: string = '';
+
+	@IsString()
+	VNSKY_DEFAULT_OTP: string = '';
+
+	@IsArray()
+	@IsString({ each: true })
+	@Transform(({ value }) => value?.split(',').map((v) => v.trim()))
+	VNSKY_CODE_DECREE_13: string[] = [];
+
+	@IsString()
+	VNSKY_CCDVVT: string = '';
+
+	@IsString()
+	VNSKY_CONTRACT_TYPE: string = 'PNG';
+
+	@IsString()
+	VNSKY_DEVICE_TOKEN: string = '';
+
+	@IsString()
+	VNSKY_ORIGIN: string = '';
 
   @IsString()
-  VNSKY_CLIENT_IDENTITY: string = '';
-
-  @IsString()
-  VNSKY_USERNAME: string = '';
-
-  @IsString()
-  VNSKY_PASSWORD: string = '';
+  VNSKY_SIGN_IMAGE_NAME: string = 'sign.jpg';
 }
 
 export class EnvironmentVariables extends IntersectionType(

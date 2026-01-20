@@ -127,26 +127,26 @@ export class VnSkyOrcResult {
 	@IsString()
 	document?: string = '1';
 
-  @IsString()
-  nationality?: string;
+	@IsString()
+	nationality?: string;
 
-  @IsString()
-  city?: string;
+	@IsString()
+	city?: string;
 
-  @IsString()
-  district?: string;
+	@IsString()
+	district?: string;
 
-  @IsString()
-  ward?: string;
+	@IsString()
+	ward?: string;
 
 	@Expose({ name: 'list_phoneNumber' })
-  listPhoneNumber?: VnSkyPhoneObject[];
+	listPhoneNumber?: VnSkyPhoneObject[];
 
-  @Expose({ name: 'total_sim' })
-  totalSim?: number
+	@Expose({ name: 'total_sim' })
+	totalSim?: number;
 
-  @Expose({ name: 'check_sendOTP' })
-  checkSendOtp?: boolean
+	@Expose({ name: 'check_sendOTP' })
+	checkSendOtp?: boolean;
 }
 
 export class VnSkyCheckProfileResult {
@@ -184,6 +184,38 @@ export class VnSkyGenContractResult {
 
 	@IsNumber()
 	type?: number;
+}
+
+export class VnSkySubmitContractSignatureResult {
+	success: boolean;
+
+	@IsString()
+	message: string;
+}
+
+export class VnSkyContractSigningCheckerResult {
+	@IsString()
+	contractId: string;
+
+	@IsString()
+	status: string;
+
+	@IsString()
+	signedAt: string;
+
+	@IsString()
+	signatureUrl: string;
+}
+
+export class VnSkyActivateResult {
+	@IsString()
+	success: true;
+
+	@IsString()
+	message: string;
+
+	@IsString()
+	activationId: string;
 }
 
 export class VnSkyGetOtpResult {

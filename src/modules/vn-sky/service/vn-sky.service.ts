@@ -1,11 +1,14 @@
 import { CommonService } from '@/modules/common/service/common.service';
 import { Injectable } from '@nestjs/common';
 import {
+  VnSkyActivateCommand,
 	VnSkyCheckProfileCommand,
 	VnSkyConfirmOtpCommand,
+	VnSkyContractSigningCheckerCommand,
 	VnSkyGenContractCommand,
 	VnSkyGetOtpCommand,
 	VnSkyOcrReqCommand,
+  VnSkySubmitContractSignatureCommand,
 } from './schemas/vn-sky.command';
 import {
 	FormDataApiRequest,
@@ -15,7 +18,9 @@ import {
 import { AppConfigService } from '@/config/settings/app-config.service';
 import { ActionLogTypeEnum } from '@/modules/action-logs/action-log.enum';
 import {
+  VnSkyActivateResult,
 	VnSkyCheckSimResult,
+	VnSkyContractSigningCheckerResult,
 	VnSkyGenContractNumberResult,
 	VnSkyGenContractResult,
 	VnSkyGenCustomerCodeResult,
@@ -23,6 +28,7 @@ import {
 	VnSkyGetOtpResult,
 	VnSkyOrcResult,
 	VnSkyProfileResult,
+  VnSkySubmitContractSignatureResult,
 } from './schemas/vn-sky.result';
 import { HTTPMethod } from '@/core/enums/http-method.enum';
 import { ExceptionFactory } from '@/core/exception/exception.factory';
@@ -195,6 +201,73 @@ export class VnSkyService {
 				);
 			} catch (error) {
 				throw ExceptionFactory.vnSkyGenContractError('');
+			}
+		});
+	}
+
+	async vnSkySubmitContractSignature(cmd: VnSkySubmitContractSignatureCommand) {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
+      const { signature, contractNo } = cmd;
+
+			try {
+				return this.commonService.callFormDataApi(
+					new FormDataApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/gen-contract/submit`,
+						logType: ActionLogTypeEnum.VNSKY_SUBMIT_CONTRACT_SIGNATURE,
+						payload: { contractNo },
+            files: { signature },
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
+						responseModel: VnSkySubmitContractSignatureResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkySubmitContractSignatureError('');
+			}
+		});
+	}
+
+	async vnSkyContractSigningChecker(cmd: VnSkyContractSigningCheckerCommand) {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
+			try {
+				return this.commonService.callApi(
+					new JsonApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/contract-signing-checker/:id`,
+						logType: ActionLogTypeEnum.VNSKY_CONTRACT_SIGNING_CHECKER,
+            pathParams: { id: cmd.id },
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
+						responseModel: VnSkyContractSigningCheckerResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyContractSigningCheckerError('');
+			}
+		});
+	}
+
+	async vnSkyActivate(cmd: VnSkyActivateCommand) {
+		return this.vnSkyAuthService.executeWithAuth(async (token) => {
+			const { front, back, portrait, ...ortherFields } = cmd;
+
+			try {
+				return this.commonService.callMixedFormDataApi(
+					new FormDataApiRequest({
+						url: `${this.settings.VNSKY_BASE_URL}/customer-service/public/api/v1/activate`,
+						logType: ActionLogTypeEnum.VNSKY_ACTIVATE,
+						payload: {
+							...ortherFields,
+							data: JSON.stringify(ortherFields.data),
+						},
+						files: {
+							front,
+							back,
+							portrait,
+						},
+						headers: this.vnSkyAuthService.getVnSkyHeader(token),
+						responseModel: VnSkyActivateResult,
+					}),
+				);
+			} catch (error) {
+				throw ExceptionFactory.vnSkyActivateError('');
 			}
 		});
 	}

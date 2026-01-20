@@ -11,6 +11,7 @@ import { UpdateOrderCommand } from '../commands/update-order.handler';
 import { OcrCommand } from '../commands/ocr.handler';
 import { GenCustomerCodeCommand } from '../commands/gen-customer-code.handler';
 import { GenSecretKeyCommand } from '../commands/gen-secret-key.handler';
+import { CheckProfileCommand } from '../commands/check-profile.handler';
 
 @Injectable()
 export class OrderSagas {
@@ -61,25 +62,29 @@ export class OrderSagas {
             commands.push(new GenCustomerCodeCommand(orderId));
 						break;
 					case OrderStepEnum.GENERATE_CUSTOMER_CODE:
-						this.logger.log(`Dispatching CHECK_PROFILE for ${orderId}`);
+						this.logger.log(`Dispatching GEN_SECRET_KEY for ${orderId}`);
             commands.push(new GenSecretKeyCommand(orderId));
+						break;
+          case OrderStepEnum.GENERATE_SECRET_KEY:
+						this.logger.log(`Dispatching CHECK_PROFILE for ${orderId}`);
+            commands.push(new CheckProfileCommand(orderId));
 						break;
 					case OrderStepEnum.CHECK_PROFILE:
 						this.logger.log(
 							`Dispatching GENERATE_CONTRACT_NUMBER for ${orderId}`,
 						);
 						break;
-					case OrderStepEnum.GENERATE_CONTRACT_NUMBER:
-						this.logger.log(`Dispatching GENERATE_CONTRACT for ${orderId}`);
-						break;
-					case OrderStepEnum.GENERATE_CONTRACT:
-						this.logger.log(`Dispatching GET OTP for ${orderId}`);
-						break;
 					case OrderStepEnum.GET_OTP:
 						this.logger.log(`Dispatching CONFIRM OTP for ${orderId}`);
 						break;
 					case OrderStepEnum.CONFIRM_OTP:
 						this.logger.log(`Dispatching CHECK SIM AFTER REG for ${orderId}`);
+						break;
+					case OrderStepEnum.GENERATE_CONTRACT_NUMBER:
+						this.logger.log(`Dispatching GENERATE_CONTRACT for ${orderId}`);
+						break;
+					case OrderStepEnum.GENERATE_CONTRACT:
+						this.logger.log(`Dispatching GET OTP for ${orderId}`);
 						break;
 					case OrderStepEnum.CHECK_SIM_AFTER_REG:
 						this.logger.log(`Success reg sim for ${orderId}`);

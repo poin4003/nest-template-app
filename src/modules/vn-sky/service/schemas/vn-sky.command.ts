@@ -103,7 +103,7 @@ export class VnSkyPhoneObject {
 }
 
 export class VnSkyGenContractCommand {
-	codeDecree13: [string];
+	codeDecree13: string[];
 
 	@IsString()
 	contractNo: string;
@@ -145,6 +145,41 @@ export class VnSkyGenContractCommand {
 
 	@IsString()
 	deviceToken: string;
+}
+
+export class VnSkySubmitContractSignatureCommand {
+	signature: Express.Multer.File;
+
+	@IsString()
+	contractNo: string = '';
+}
+
+export class VnSkyContractSigningCheckerCommand {
+	@IsString()
+	id: string = '';
+}
+
+export class VnSkyEcryptedData {
+  @IsString()
+  encryptedData: string;
+
+  @IsString()
+  encryptedAESKey: string;
+
+  @IsString()
+  iv: string;
+}
+
+export class VnSkyActivateCommand {
+	front: Express.Multer.File;
+	back: Express.Multer.File;
+	portrait: Express.Multer.File;
+
+	@IsString()
+	idEkyc: string;
+
+	@IsString()
+	data: VnSkyEcryptedData;
 }
 
 export class VnSkyGetOtpCommand {

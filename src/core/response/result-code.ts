@@ -157,6 +157,27 @@ export class ResultCode {
 		ErrorCategoryEnum.THIRD_PARTY,
 	);
 
+	static readonly VN_SKY_SUBMIT_CONTRACT_SIGNATURE = new ResultCode(
+		6011,
+		'VnSky submit contract signature failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
+	static readonly VN_SKY_CONTRACT_SIGNING_CHECKER = new ResultCode(
+		6012,
+		'VnSky contract signing checker failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
+	static readonly VN_SKY_ACTIVATE = new ResultCode(
+		6013,
+		'VnSky activate failed',
+		HttpStatus.SERVICE_UNAVAILABLE,
+		ErrorCategoryEnum.THIRD_PARTY,
+	);
+
 	private constructor(
 		public readonly code: number,
 		public readonly message: string,

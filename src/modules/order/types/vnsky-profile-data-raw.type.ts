@@ -8,6 +8,7 @@ export class VnSkyProfileDataRaw {
 	idEkyc: string;
 	issueBy: string;
 	issueDate: string;
+  expiry: string;
 	sex: string;
 	document: string;
 	nationality: string;

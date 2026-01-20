@@ -1,33 +1,33 @@
 import { PrismaService } from '@/core/database/prisma.service';
-import { MyException } from '@/core/exception/my.exception';
-import { ResultCode } from '@/core/response/result-code';
 import { VnSkyService } from '@/modules/vn-sky/service/vn-sky.service';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { OrderStepFailedEvent } from '../events/order-step-failed.event';
 import { OrderStepEnum } from '../../order.enum';
-import { ExceptionFactory } from '@/core/exception/exception.factory';
-import { VnSkyOrderDataRaw } from '../../types/vnsky-order-data-raw.type';
+import { MyException } from '@/core/exception/my.exception';
+import { ResultCode } from '@/core/response/result-code';
 import { OrderStepSuccessEvent } from '../events/order-step-success.event';
-import { VnSkyGenSecretKeyQuery } from '@/modules/vn-sky/service/schemas/vn-sky.query';
+import { VnSkyOrderDataRaw } from '../../types/vnsky-order-data-raw.type';
+import { ExceptionFactory } from '@/core/exception/exception.factory';
 import { VnSkyProfileDataRaw } from '../../types/vnsky-profile-data-raw.type';
+import { VnSkyGenContractNumberQuery } from '@/modules/vn-sky/service/schemas/vn-sky.query';
 
-export class GenSecretKeyCommand {
+export class GenContractNumberCommand {
 	constructor(public readonly orderId: string) {}
 }
 
-@CommandHandler(GenSecretKeyCommand)
-export class GenSecretKeyHandler implements ICommandHandler<GenSecretKeyCommand> {
+@CommandHandler(GenContractNumberCommand)
+export class GenContractNumberHandler implements ICommandHandler<GenContractNumberCommand> {
 	constructor(
 		private readonly vnSkyService: VnSkyService,
 		private readonly prisma: PrismaService,
 		private readonly eventBus: EventBus,
 	) {}
 
-	async execute(command: GenSecretKeyCommand) {
+	async execute(command: GenContractNumberCommand) {
 		const { orderId } = command;
 
 		try {
- 			const order = await this.prisma.order.findUnique({
+			const order = await this.prisma.order.findUnique({
 				where: { id: orderId },
 				include: {
 					profiles: true,
@@ -39,17 +39,16 @@ export class GenSecretKeyHandler implements ICommandHandler<GenSecretKeyCommand>
 			if (!profile) throw ExceptionFactory.dataNotFound(`profile: ${orderId}`);
 			const profileDataRaw = new VnSkyProfileDataRaw(profile?.rawData as any);
 
-			const genSKQuery = new VnSkyGenSecretKeyQuery();
-			genSKQuery.idKyc = profileDataRaw.idEkyc;
+			const genCNQuery = new VnSkyGenContractNumberQuery();
+			genCNQuery.idNo = profileDataRaw.idNo;
+			genCNQuery.activeType = '1';
 
-			const result = await this.vnSkyService.vnSkyGenSecretKey(genSKQuery);
+			const result = await this.vnSkyService.vnSkyGenContractNumber(genCNQuery);
 
-      const existingData = (order?.rawData as any) || {}
+			const existingData = (order?.rawData as any) || {};
 			const orderData = new VnSkyOrderDataRaw({
-        ...existingData,
-				sessionToken: result.sessionToken,
-				publicKey: result.publicKey,
-				expiredAt: result.expiredAt,
+				...existingData,
+				contractNo: result.contractNo,
 			});
 
 			await this.prisma.order.update({
@@ -62,7 +61,7 @@ export class GenSecretKeyHandler implements ICommandHandler<GenSecretKeyCommand>
 			this.eventBus.publish(
 				new OrderStepSuccessEvent(
 					orderId,
-					OrderStepEnum.GENERATE_SECRET_KEY,
+					OrderStepEnum.GENERATE_CONTRACT_NUMBER,
 					result,
 				),
 			);
@@ -78,7 +77,7 @@ export class GenSecretKeyHandler implements ICommandHandler<GenSecretKeyCommand>
 			this.eventBus.publish(
 				new OrderStepFailedEvent(
 					orderId,
-					OrderStepEnum.GENERATE_SECRET_KEY,
+					OrderStepEnum.GENERATE_CONTRACT_NUMBER,
 					errorMessage,
 					errorCode,
 				),
